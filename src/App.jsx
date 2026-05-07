@@ -1,127 +1,405 @@
+import { useMemo, useState } from "react";
+
 export default function App() {
-  const featuredPosts = [
+  // You’ll eventually load this from markdown/MDX or a JSON index.
+  const entries = [
     {
-      title: "Microsoft Intune Automation",
-      description:
-        "Scripts, deployment strategies, and endpoint management workflows for modern enterprises.",
-      tag: "Intune",
+      type: "Troubleshooting",
+      title: "Intune remediation fails with 0x80004005 on HP devices",
+      summary:
+        "How we traced stale firmware + unsupported HPIA models causing Secure Boot certificate remediation issues, plus mitigation options.",
+      tags: ["Intune", "HP", "Firmware", "Secure Boot"],
+      date: "2026-05-06",
+      href: "#", // later: /docs/intune/remediation-0x80004005-hp
     },
     {
-      title: "Autopilot & Endpoint Security",
-      description:
-        "Real-world configuration examples, compliance policies, and troubleshooting notes.",
-      tag: "Security",
+      type: "Script",
+      title: "Graph: Export Intune policies to SharePoint (automation pattern)",
+      summary:
+        "A production-ready pattern for exporting configuration items and uploading to SharePoint via Graph with least-privilege app permissions.",
+      tags: ["Graph", "Intune", "Automation", "SharePoint"],
+      date: "2026-04-12",
+      href: "#",
     },
     {
-      title: "Cloud Administration Journey",
-      description:
-        "Projects, lessons learned, certifications, and career growth in Microsoft 365 and Azure.",
-      tag: "Career",
+      type: "Report",
+      title: "Power BI: App compliance baseline + vulnerable versions",
+      summary:
+        "Data model approach for tracking safe versions, CVEs, and exploit exposure with MDE Advanced Hunting + conditional formatting.",
+      tags: ["Power BI", "MDE", "Compliance"],
+      date: "2026-03-22",
+      href: "#",
+    },
+    {
+      type: "Project",
+      title: "Secure Boot certificate rollover: phased rollout playbook",
+      summary:
+        "Pilot → rings → monitoring. Includes detection logic, communication plan, and operational dashboards for enterprise rollout.",
+      tags: ["Windows", "Security", "Certificate", "Intune"],
+      date: "2026-03-10",
+      href: "#",
     },
   ];
 
+  const resourceTiles = [
+    {
+      title: "Troubleshooting Docs",
+      desc: "Root cause → fix → validation. Built for real enterprise incidents.",
+      meta: "Errors • Logs • Fixes",
+      href: "#content",
+    },
+    {
+      title: "Graph & PowerShell Scripts",
+      desc: "Reusable automation patterns for Intune, Entra ID, SharePoint, MDE.",
+      meta: "Copy-first • Production notes",
+      href: "#content",
+    },
+    {
+      title: "Power BI Reports",
+      desc: "Models, measures, schema tips, and operational dashboards.",
+      meta: "Compliance • Updates • Inventory",
+      href: "#content",
+    },
+    {
+      title: "Projects & Architecture",
+      desc: "Rollouts, design decisions, diagrams, and what worked at scale.",
+      meta: "Runbooks • Monitoring • CAB-ready",
+      href: "#content",
+    },
+  ];
+
+  const [query, setQuery] = useState("");
+  const [activeTag, setActiveTag] = useState("All");
+
+  const allTags = useMemo(() => {
+    const t = new Set();
+    entries.forEach((e) => e.tags.forEach((x) => t.add(x)));
+    return ["All", ...Array.from(t).sort()];
+  }, [entries]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return entries
+      .filter((e) => (activeTag === "All" ? true : e.tags.includes(activeTag)))
+      .filter((e) => {
+        if (!q) return true;
+        return (
+          e.title.toLowerCase().includes(q) ||
+          e.summary.toLowerCase().includes(q) ||
+          e.tags.join(" ").toLowerCase().includes(q) ||
+          e.type.toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => (a.date < b.date ? 1 : -1));
+  }, [entries, query, activeTag]);
+
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* HERO */}
+      {/* Top Nav */}
+      <header className="sticky top-0 z-50 backdrop-blur bg-black/60 border-b border-white/10">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <a href="#" className="font-semibold tracking-tight">
+            Arman<span className="text-cyan-400">Dev</span>
+            <span className="ml-2 text-xs text-white/40 font-normal">
+              M365 • Intune • Automation
+            </span>
+          </a>
+
+          <nav className="hidden md:flex items-center gap-6 text-sm text-white/70">
+            <a className="hover:text-white" href="#content">
+              Content
+            </a>
+            <a className="hover:text-white" href="#resources">
+              Resources
+            </a>
+            <a className="hover:text-white" href="#about">
+              About
+            </a>
+            <a className="hover:text-white" href="#contact">
+              Contact
+            </a>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <a
+              href="https://github.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:inline-flex border border-white/15 hover:border-white/30 bg-white/5 px-3 py-2 rounded-xl text-sm"
+            >
+              GitHub
+            </a>
+            <a
+              href="https://www.linkedin.com"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex border border-white/15 hover:border-white/30 bg-white/5 px-3 py-2 rounded-xl text-sm"
+            >
+              LinkedIn
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero */}
       <section className="border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-12 items-center">
-          <div className="flex items-center gap-3 mb-6">
-  <img
-    src="/logo.png"
-    alt="ArmanDev Logo"
-    className="w-10 h-10 rounded-xl border border-white/10"
-  />
-  <div className="text-left">
-    <div className="text-white font-semibold">ArmanDev</div>
-    <div className="text-cyan-300 text-xs">Cloud • Intune • M365</div>
-  </div>
-</div>
+          
           <div>
-            <div className="inline-block text-cyan-300 text-sm border border-cyan-500/30 px-4 py-1 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 text-cyan-300 text-sm border border-cyan-500/25 bg-cyan-500/5 px-4 py-1 rounded-full mb-6">
               Modern Workplace • Cloud • Endpoint Engineering
             </div>
 
-            <h1 className="text-6xl font-bold">
-              Arman<span className="text-cyan-400">Dev</span>
+            <h1 className="text-5xl sm:text-6xl font-bold leading-tight">
+              Documentation built for{" "}
+              <span className="text-cyan-400">enterprise reality</span>
             </h1>
 
-            <p className="text-white/70 mt-6 text-lg">
-              Building secure, scalable Microsoft 365 environments and sharing real-world IT automation,
-              Intune setups, and cloud engineering projects.
+            <p className="text-white/70 mt-6 text-lg leading-relaxed">
+              I document real-world Microsoft 365 issues and the fixes that work
+              at scale: Intune, Autopilot, Entra ID, Graph automation, MDE,
+              Power BI reporting, and operational runbooks.
             </p>
 
-            <div className="mt-8 flex gap-4">
+            <div className="mt-8 flex flex-wrap gap-4">
               <a
                 href="#content"
-                className="bg-cyan-400 text-black px-6 py-3 rounded-xl font-medium"
+                className="bg-cyan-400 hover:bg-cyan-300 text-black px-6 py-3 rounded-xl font-medium"
               >
-                Explore Content
+                Browse Documentation
               </a>
-
               <a
-                href="https://www.linkedin.com"
-                target="_blank"
-                className="border border-white/20 px-6 py-3 rounded-xl"
+                href="#resources"
+                className="border border-white/20 hover:border-white/35 bg-white/5 px-6 py-3 rounded-xl"
               >
-                LinkedIn
+                View Resources
               </a>
+            </div>
+
+            {/* Quick stats */}
+            <div className="mt-10 grid grid-cols-3 gap-4 text-sm">
+              <div className="p-4 rounded-2xl border border-white/10 bg-white/5">
+                <div className="text-white/40">Focus</div>
+                <div className="mt-1 font-medium">Intune & Automation</div>
+              </div>
+              <div className="p-4 rounded-2xl border border-white/10 bg-white/5">
+                <div className="text-white/40">Outputs</div>
+                <div className="mt-1 font-medium">Scripts + Runbooks</div>
+              </div>
+              <div className="p-4 rounded-2xl border border-white/10 bg-white/5">
+                <div className="text-white/40">Style</div>
+                <div className="mt-1 font-medium">Problem → Fix</div>
+              </div>
             </div>
           </div>
 
+          {/* Right rail */}
           <div className="bg-white/5 border border-white/10 p-6 rounded-3xl">
             <h2 className="text-xl font-semibold mb-4 text-cyan-300">
               Current Focus
             </h2>
 
-            <div className="space-y-4 text-white/70">
-              <div className="p-4 bg-black/40 rounded-xl border border-white/10">
-                Intune & Endpoint Management
+            <div className="space-y-3 text-white/70">
+              {[
+                "Intune remediation at scale (health + compliance)",
+                "Firmware + BIOS update automation (Lenovo/HP patterns)",
+                "Secure Boot certificate rollout monitoring & reporting",
+                "Graph exports to SharePoint + Power BI ingestion pipelines",
+              ].map((x) => (
+                <div
+                  key={x}
+                  className="p-4 bg-black/40 rounded-xl border border-white/10"
+                >
+                  {x}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 p-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/5">
+              <div className="text-sm text-cyan-200 font-medium">
+                Tip for readers
               </div>
-              <div className="p-4 bg-black/40 rounded-xl border border-white/10">
-                Autopilot Deployment Automation
-              </div>
-              <div className="p-4 bg-black/40 rounded-xl border border-white/10">
-                Microsoft 365 Security & Compliance
+              <div className="mt-1 text-sm text-white/70">
+                Each entry includes: symptoms, root cause, fix, validation, and
+                rollback guidance where applicable.
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CONTENT */}
-      <section id="content" className="max-w-6xl mx-auto px-6 py-24">
-        <h2 className="text-3xl font-bold mb-10">Featured Topics</h2>
+      {/* Resources */}
+      <section id="resources" className="max-w-6xl mx-auto px-6 py-20">
+        <div className="flex items-end justify-between gap-6 mb-8">
+          <div>
+            <h2 className="text-3xl font-bold">Resources</h2>
+            <p className="text-white/60 mt-2">
+              Organized for fast lookup: documentation, scripts, reports, and
+              project playbooks.
+            </p>
+          </div>
+        </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {featuredPosts.map((post) => (
-            <div
-              key={post.title}
-              className="border border-white/10 bg-white/5 p-6 rounded-2xl hover:border-cyan-400/40"
+        <div className="grid md:grid-cols-2 gap-6">
+          {resourceTiles.map((t) => (
+            <a
+              key={t.title}
+              href={t.href}
+              className="group border border-white/10 bg-white/5 p-6 rounded-2xl hover:border-cyan-400/40 transition"
             >
-              <div className="text-cyan-300 text-sm mb-3">{post.tag}</div>
-              <h3 className="text-xl font-semibold mb-3">{post.title}</h3>
-              <p className="text-white/60">{post.description}</p>
-            </div>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-semibold">{t.title}</h3>
+                  <p className="text-white/60 mt-2 leading-relaxed">{t.desc}</p>
+                </div>
+                <div className="text-xs text-white/50 border border-white/10 bg-black/30 px-3 py-1 rounded-full">
+                  {t.meta}
+                </div>
+              </div>
+              <div className="mt-4 text-sm text-cyan-300 group-hover:text-cyan-200">
+                Explore →
+              </div>
+            </a>
           ))}
         </div>
       </section>
 
-      {/* ABOUT */}
-      <section className="border-t border-white/10 bg-white/5">
+      {/* Content Section */}
+      <section id="content" className="border-t border-white/10 bg-white/5">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
+            <div>
+              <h2 className="text-3xl font-bold">Latest Documentation</h2>
+              <p className="text-white/60 mt-2">
+                Search and filter across troubleshooting notes, scripts, reports,
+                and project playbooks.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search: error code, product, tag, vendor..."
+                className="w-full sm:w-96 bg-black/40 border border-white/10 focus:border-cyan-400/40 outline-none rounded-xl px-4 py-3 text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Tag filters */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {allTags.map((t) => {
+              const active = t === activeTag;
+              return (
+                <button
+                  key={t}
+                  onClick={() => setActiveTag(t)}
+                  className={[
+                    "text-sm px-3 py-2 rounded-xl border transition",
+                    active
+                      ? "border-cyan-400/50 bg-cyan-500/10 text-cyan-200"
+                      : "border-white/10 bg-black/20 text-white/70 hover:border-white/25",
+                  ].join(" ")}
+                >
+                  {t}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Entry cards */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {filtered.map((e) => (
+              <a
+                key={e.title}
+                href={e.href}
+                className="border border-white/10 bg-black/20 p-6 rounded-2xl hover:border-cyan-400/40 transition"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <div className="text-xs text-white/50 uppercase tracking-wide">
+                    {e.type}
+                  </div>
+                  <div className="text-xs text-white/40">{e.date}</div>
+                </div>
+
+                <h3 className="text-xl font-semibold mt-3">{e.title}</h3>
+                <p className="text-white/60 mt-2 leading-relaxed">{e.summary}</p>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {e.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="text-xs text-white/70 border border-white/10 bg-white/5 px-2.5 py-1 rounded-full"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-5 text-sm text-cyan-300">Read →</div>
+              </a>
+            ))}
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="mt-10 text-white/60">
+              No results. Try a different keyword or tag.
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" className="border-t border-white/10">
         <div className="max-w-4xl mx-auto px-6 py-20 text-center">
           <h2 className="text-3xl font-bold mb-6">About ArmanDev</h2>
-
           <p className="text-white/70 leading-relaxed">
-            ArmanDev is a personal IT engineering platform focused on Microsoft 365, Intune,
-            endpoint automation, and cloud infrastructure. This site documents real-world
-            projects, scripts, and professional growth toward cloud architecture.
+            ArmanDev is my engineering notebook for Microsoft 365 and endpoint
+            operations. I publish solutions that stand up in enterprise
+            environments: repeatable automation, deployment patterns, reporting
+            pipelines, and troubleshooting guides that save time and reduce risk.
           </p>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="text-center py-10 text-white/40 text-sm">
-        © 2026 ArmanDev — Built for cloud engineering growth
+      {/* Contact */}
+      <section id="contact" className="border-t border-white/10 bg-white/5">
+        <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+          <h2 className="text-2xl font-bold">Contact</h2>
+          <p className="text-white/60 mt-2">
+            Want to collaborate or suggest a topic? Reach out.
+          </p>
+
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <a
+              className="border border-white/15 hover:border-white/30 bg-black/30 px-5 py-3 rounded-xl text-sm"
+              href="mailto:you@domain.com"
+            >
+              you@domain.com
+            </a>
+            <a
+              className="border border-white/15 hover:border-white/30 bg-black/30 px-5 py-3 rounded-xl text-sm"
+              href="https://github.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub
+            </a>
+            <a
+              className="border border-white/15 hover:border-white/30 bg-black/30 px-5 py-3 rounded-xl text-sm"
+              href="https://www.linkedin.com"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LinkedIn
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="text-center py-10 text-white/40 text-sm border-t border-white/10">
+        © 2026 ArmanDev — Built for operational clarity and scalable automation
       </footer>
     </div>
   );
