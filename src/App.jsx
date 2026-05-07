@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import logo from "./assets/logo.png";
 
 export default function App() {
   // You’ll eventually load this from markdown/MDX or a JSON index.
@@ -94,7 +95,7 @@ export default function App() {
   }, [entries, query, activeTag]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+   <div className="absolute inset-0 bg-cyan-500/5 blur-3xl pointer-events-none">
       {/* Top Nav */}
       <header className="sticky top-0 z-50 backdrop-blur bg-black/60 border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -142,6 +143,23 @@ export default function App() {
       </header>
 
       {/* Hero */}
+      <div className="flex items-center gap-4 mb-8">
+  <img
+    src={logo}
+    alt="ArmanDev Logo"
+    className="w-16 h-16 rounded-2xl border border-white/10 bg-white/5 p-1"
+  />
+
+  <div>
+    <div className="text-2xl font-bold tracking-tight">
+      Arman<span className="text-cyan-400">Dev</span>
+    </div>
+
+    <div className="text-sm text-white/50">
+      Modern Workplace Engineering
+    </div>
+  </div>
+</div>
       <section className="border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-12 items-center">
           
@@ -208,7 +226,7 @@ export default function App() {
               ].map((x) => (
                 <div
                   key={x}
-                  className="p-4 bg-black/40 rounded-xl border border-white/10"
+                  className="p-4 bg-zinc-900/70 backdrop-blur-sm rounded-xl border border-white/10"
                 >
                   {x}
                 </div>
@@ -298,7 +316,7 @@ export default function App() {
                     "text-sm px-3 py-2 rounded-xl border transition",
                     active
                       ? "border-cyan-400/50 bg-cyan-500/10 text-cyan-200"
-                      : "border-white/10 bg-black/20 text-white/70 hover:border-white/25",
+                      : "border-white/10 bg-zinc-900/70 backdrop-blur-sm text-white/70 hover:border-white/25",
                   ].join(" ")}
                 >
                   {t}
