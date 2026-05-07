@@ -1,10 +1,20 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import App from "./App.jsx";
+import Posts from "./pages/Posts.jsx";
+import Post from "./pages/Post.jsx";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/posts" element={<Posts />} />
+        <Route path="/posts/:slug" element={<Post />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </HashRouter>
   </React.StrictMode>
 )
