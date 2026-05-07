@@ -25,7 +25,17 @@ export default function App() {
       {/* HERO */}
       <section className="border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-12 items-center">
-          
+          <div className="flex items-center gap-3 mb-6">
+  <img
+    src="/logo.png"
+    alt="ArmanDev Logo"
+    className="w-10 h-10 rounded-xl border border-white/10"
+  />
+  <div className="text-left">
+    <div className="text-white font-semibold">ArmanDev</div>
+    <div className="text-cyan-300 text-xs">Cloud • Intune • M365</div>
+  </div>
+</div>
           <div>
             <div className="inline-block text-cyan-300 text-sm border border-cyan-500/30 px-4 py-1 rounded-full mb-6">
               Modern Workplace • Cloud • Endpoint Engineering
