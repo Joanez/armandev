@@ -5,7 +5,13 @@ const modules = import.meta.glob("../contents/posts/*.md", {
   as: "raw",
   eager: true,
 });
+console.log("Modules found:", Object.keys(modules));
+export function getAllPosts() {
+  console.log("Post count:", Object.keys(modules).length);
 
+  const posts = Object.entries(modules).map(([path, raw]) => {
+
+    
 function filenameToSlug(path) {
   const file = path.split("/").pop() || "";
   return file.replace(/\.md$/, "");
