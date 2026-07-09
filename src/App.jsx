@@ -1,46 +1,10 @@
 import { useMemo, useState } from "react";
 import logo from "./assets/logo.png";
+import { getAllPosts } from "./lib/posts";
 
 export default function App() {
   // You’ll eventually load this from markdown/MDX or a JSON index.
-  const entries = [
-    {
-      type: "Troubleshooting",
-      title: "Intune remediation fails with 0x80004005 on HP devices",
-      summary:
-        "How we traced stale firmware + unsupported HPIA models causing Secure Boot certificate remediation issues, plus mitigation options.",
-      tags: ["Intune", "HP", "Firmware", "Secure Boot"],
-      date: "2026-05-06",
-      href: "#", // later: /docs/intune/remediation-0x80004005-hp
-    },
-    {
-      type: "Script",
-      title: "Graph: Export Intune policies to SharePoint (automation pattern)",
-      summary:
-        "A production-ready pattern for exporting configuration items and uploading to SharePoint via Graph with least-privilege app permissions.",
-      tags: ["Graph", "Intune", "Automation", "SharePoint"],
-      date: "2026-04-12",
-      href: "#",
-    },
-    {
-      type: "Report",
-      title: "Power BI: App compliance baseline + vulnerable versions",
-      summary:
-        "Data model approach for tracking safe versions, CVEs, and exploit exposure with MDE Advanced Hunting + conditional formatting.",
-      tags: ["Power BI", "MDE", "Compliance"],
-      date: "2026-03-22",
-      href: "#",
-    },
-    {
-      type: "Project",
-      title: "Secure Boot certificate rollover: phased rollout playbook",
-      summary:
-        "Pilot → rings → monitoring. Includes detection logic, communication plan, and operational dashboards for enterprise rollout.",
-      tags: ["Windows", "Security", "Certificate", "Intune"],
-      date: "2026-03-10",
-      href: "#",
-    },
-  ];
+ const entries = getAllPosts().slice(0, 6);
 
   const resourceTiles = [
     {
