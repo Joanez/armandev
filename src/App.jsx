@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import logo from "./assets/logo.png";
 import { getAllPosts } from "./lib/posts";
+import { Link } from "react-router-dom";
 
 export default function App() {
  const entries = getAllPosts()  .sort((a, b) => (a.date < b.date? 1 : -1))
@@ -311,11 +312,12 @@ export default function App() {
             {/* Entry cards */}
             <div className="grid md:grid-cols-2 gap-6">
               {filtered.map((entry) => (
-                <a
-                  key={entry.slug || entry.title}
-                  href={`/posts/${entry.slug}`}
-                  className="block rounded-3xl border border-white/10 bg-zinc-950/70 p-6 transition hover:border-cyan-400/40"
-                >
+                <Link
+  key={entry.slug}
+  to={`/posts/${entry.slug}`}
+  className="border border-white/10 bg-black/20 p-6 rounded-2xl hover:border-cyan-400/40 transition"
+>
+
                   <div className="flex items-center justify-between gap-4">
                     <div className="text-xs text-white/50 uppercase tracking-wide">
                       {entry.type || "Documentation"}
@@ -355,7 +357,7 @@ export default function App() {
                   </div>
 
                   <div className="mt-5 text-sm text-cyan-300">Read →</div>
-                </a>
+                </Link>
               ))}
             </div>
 
