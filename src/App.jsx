@@ -4,7 +4,9 @@ import { getAllPosts } from "./lib/posts";
 
 export default function App() {
   // You’ll eventually load this from markdown/MDX or a JSON index.
- const entries = getAllPosts();
+const entries = getAllPosts()
+  .sort((a, b) => (a.date < b.date ? 1 : -1))
+  .slice(0, 6);
 
   const resourceTiles = [
     {
@@ -357,7 +359,7 @@ export default function App() {
               className="border border-white/15 hover:border-white/30 bg-black/30 px-5 py-3 rounded-xl text-sm"
               href="mailto:you@domain.com"
             >
-              you@domain.com
+              apacheco@armandev.tech
             </a>
             <a
               className="border border-white/15 hover:border-white/30 bg-black/30 px-5 py-3 rounded-xl text-sm"
