@@ -1,12 +1,13 @@
-// Pull all markdown files at build time as raw text
-const modules = import.meta.glob("../contents/posts/*.md", {
-  as: "raw",
+// Pull all markdown files at build time as raw text.
+// Important: ?raw must be in the glob path so Vite does not parse .md as JS.
+const modules = import.meta.glob("../contents/posts/*.md?raw", {
+  import: "default",
   eager: true,
 });
 
 function filenameToSlug(path) {
   const file = path.split("/").pop() || "";
-  return file.replace(/\.md$/, "");
+  return file.replace(/\.md\?raw$/, "").replace(/\.md$/, "");
 }
 
 function parseFrontMatter(raw) {
@@ -46,6 +47,9 @@ function parseFrontMatter(raw) {
 
     if (!trimmed) continue;
 
+    // Handles arrays like:
+    // tags:
+    //   - MDE
     if (trimmed.startsWith("- ") && currentKey) {
       if (!Array.isArray(data[currentKey])) {
         data[currentKey] = [];
@@ -54,6 +58,7 @@ function parseFrontMatter(raw) {
       data[currentKey].push(
         trimmed.slice(2).trim().replace(/^["']|["']$/g, "")
       );
+
       continue;
     }
 
@@ -97,7 +102,6 @@ export function getAllPosts() {
       tags: Array.isArray(data.tags) ? data.tags : [],
       products: Array.isArray(data.products) ? data.products : [],
       errorCodes: Array.isArray(data.errorCodes) ? data.errorCodes : [],
-      ...data,
     };
   });
 
