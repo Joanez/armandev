@@ -2,7 +2,8 @@ import matter from "gray-matter";
 
 // Pull all markdown files at build time
 const modules = import.meta.glob("../contents/posts/*.md", {
-  as: "raw",
+  query: "?raw",
+  import: "default",
   eager: true,
 });
 
