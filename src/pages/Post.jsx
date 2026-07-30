@@ -1,8 +1,160 @@
-import { useParams, Link } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
+import { Link, useParams } from "react-router-dom";
 import { getPostBySlug } from "../lib/posts";
+
+function renderInlineMarkdown(text) {
+  if (!text) return "";
+
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+
+  return parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+
+    return part;
+  });
+}
+
+function MarkdownRenderer({ content }) {
+  if (!content) {
+    return null;
+  }
+
+  const lines = content.split(/\r?\n/);
+  const elements = [];
+
+  let listItems = [];
+  let codeLines = [];
+  let inCodeBlock = false;
+
+  function flushList() {
+    if (listItems.length > 0) {
+      elements.push(
+        <ul key={`ul-${elements.length}`} className="list-disc pl-6 my-4 space-y-2">
+          {listItems.map((item, index) => (
+            <li key={index}>{renderInlineMarkdown(item)}</li>
+          ))}
+        </ul>
+      );
+
+      listItems = [];
+    }
+  }
+
+  function flushCodeBlock() {
+    if (codeLines.length > 0) {
+      elements.push(
+        <pre
+          key={`code-${elements.length}`}
+          className="my-6 overflow-x-auto rounded-2xl border border-white/10 bg-black/50 p-4 text-sm text-cyan-100"
+        >
+          <code>{codeLines.join("\n")}</code>
+        </pre>
+      );
+
+      codeLines = [];
+    }
+  }
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("```")) {
+      if (inCodeBlock) {
+        inCodeBlock = false;
+        flushCodeBlock();
+      } else {
+        flushList();
+        inCodeBlock = true;
+      }
+
+      return;
+    }
+
+    if (inCodeBlock) {
+      codeLines.push(line);
+      return;
+    }
+
+    if (!trimmed) {
+      flushList();
+      return;
+    }
+
+    if (trimmed === "---") {
+      flushList();
+
+      elements.push(
+        <hr key={`hr-${index}`} className="my-8 border-white/10" />
+      );
+
+      return;
+    }
+
+    if (trimmed.startsWith("# ")) {
+      flushList();
+
+      elements.push(
+        <h1
+          key={index}
+          className="mt-10 mb-5 text-4xl font-bold leading-tight text-white"
+        >
+          {renderInlineMarkdown(trimmed.replace(/^# /, ""))}
+        </h1>
+      );
+
+      return;
+    }
+
+    if (trimmed.startsWith("## ")) {
+      flushList();
+
+      elements.push(
+        <h2
+          key={index}
+          className="mt-10 mb-4 text-2xl font-bold text-white"
+        >
+          {renderInlineMarkdown(trimmed.replace(/^## /, ""))}
+        </h2>
+      );
+
+      return;
+    }
+
+    if (trimmed.startsWith("### ")) {
+      flushList();
+
+      elements.push(
+        <h3
+          key={index}
+          className="mt-8 mb-3 text-xl font-semibold text-cyan-200"
+        >
+          {renderInlineMarkdown(trimmed.replace(/^### /, ""))}
+        </h3>
+      );
+
+      return;
+    }
+
+    if (trimmed.startsWith("- ")) {
+      listItems.push(trimmed.replace(/^- /, ""));
+      return;
+    }
+
+    flushList();
+
+    elements.push(
+      <p key={index} className="my-4 leading-8 text-white/75">
+        {renderInlineMarkdown(trimmed)}
+      </p>
+    );
+  });
+
+  flushList();
+  flushCodeBlock();
+
+  return <>{elements}</>;
+}
 
 export default function Post() {
   const { slug } = useParams();
@@ -10,58 +162,72 @@ export default function Post() {
 
   if (!post) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-16">
-        <p className="text-white/70">Post not found.</p>
-        <Link className="text-cyan-300" to="/posts">
-          Back to posts
-        </Link>
+      <div className="min-h-screen bg-zinc-950 text-white">
+        <main className="max-w-3xl mx-auto px-6 py-16">
+          <Link to="/" className="text-cyan-300 hover:text-cyan-200">
+            ← Back
+          </Link>
+
+          <h1 className="mt-10 text-4xl font-bold">Post not found</h1>
+
+          <p className="mt-4 text-white/60">
+            The article you are looking for does not exist or the slug does not
+            match the Markdown file.
+          </p>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-16">
-      <Link className="text-cyan-300 text-sm" to="/posts">
-        ← Back
-      </Link>
+    <div className="min-h-screen bg-zinc-950 text-white">
+      <div className="fixed inset-0 bg-cyan-500/5 blur-3xl pointer-events-none" />
 
-      <div className="mt-6 border border-white/10 bg-white/5 rounded-2xl p-6">
-        <div className="flex items-center justify-between text-xs text-white/50">
-          <span className="uppercase tracking-wide">{post.type}</span>
-          <span>{post.date}</span>
-        </div>
+      <main className="relative z-10 max-w-4xl mx-auto px-6 py-16">
+        <Link to="/" className="text-cyan-300 hover:text-cyan-200">
+          ← Back
+        </Link>
 
-        <h1 className="text-3xl font-bold mt-3">{post.title}</h1>
-        <p className="text-white/60 mt-3">{post.summary}</p>
+        <article className="mt-14">
+          <div className="text-sm text-white/40">
+            {post.type || "Documentation"} • {post.date || "No date"}
+          </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {(post.tags || []).map((t) => (
-            <span
-              key={t}
-              className="text-xs text-white/70 border border-white/10 bg-white/5 px-2.5 py-1 rounded-full"
-            >
-              {t}
-            </span>
-          ))}
-          {(post.errorCodes || []).map((e) => (
-            <span
-              key={e}
-              className="text-xs text-cyan-200 border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 rounded-full"
-            >
-              {e}
-            </span>
-          ))}
-        </div>
-      </div>
+          <h1 className="mt-4 text-4xl sm:text-5xl font-bold leading-tight text-white">
+            {post.title}
+          </h1>
 
-      <article className="prose prose-invert max-w-none mt-10">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeHighlight]}
-        >
-          {post.content}
-        </ReactMarkdown>
-      </article>
+          {post.summary && (
+            <p className="mt-6 text-lg leading-8 text-white/60">
+              {post.summary}
+            </p>
+          )}
+
+          <div className="mt-8 flex flex-wrap gap-2">
+            {(post.tags || []).map((tag) => (
+              <span
+                key={tag}
+                className="text-xs text-white/70 border border-white/10 bg-white/5 px-2.5 py-1 rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+
+            {(post.errorCodes || []).map((errorCode) => (
+              <span
+                key={errorCode}
+                className="text-xs text-cyan-200 border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 rounded-full"
+              >
+                {errorCode}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-12 border-t border-white/10 pt-10">
+            <MarkdownRenderer content={post.content} />
+          </div>
+        </article>
+      </main>
     </div>
   );
 }
