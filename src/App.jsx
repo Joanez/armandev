@@ -3,10 +3,8 @@ import logo from "./assets/logo.png";
 import { getAllPosts } from "./lib/posts";
 
 export default function App() {
-  const entries = getAllPosts()
-    .filter((p) => p.title && p.summary && p.date)
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-    .slice(0, 6);
+ const entries = getAllPosts()  .sort((a, b) => (a.date < b.date? 1 : -1))
+  .slice(0, 6);
 
   const resourceTiles = [
     {

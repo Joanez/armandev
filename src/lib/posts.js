@@ -1,13 +1,16 @@
-// Pull all markdown files at build time as raw text.
-// Important: ?raw must be in the glob path so Vite does not parse .md as JS.
-const modules = import.meta.glob("../contents/posts/*.md?raw", {
+const modules = import.meta.glob("../contents/posts/*.md", {
+  query: "?raw",
   import: "default",
   eager: true,
 });
 
 function filenameToSlug(path) {
   const file = path.split("/").pop() || "";
-  return file.replace(/\.md\?raw$/, "").replace(/\.md$/, "");
+  return file.replace(/\.md$/, "");
+}
+
+function cleanValue(value) {
+  return value.trim().replace(/^["']|["']$/g, "");
 }
 
 function parseFrontMatter(raw) {
@@ -18,27 +21,29 @@ function parseFrontMatter(raw) {
     };
   }
 
-  if (!raw.startsWith("---")) {
+  const normalized = raw.replace(/^\uFEFF/, "");
+
+  if (!normalized.startsWith("---")) {
     return {
       data: {},
-      content: raw,
+      content: normalized,
     };
   }
 
-  const endIndex = raw.indexOf("\n---", 3);
+  const endIndex = normalized.indexOf("\n---", 3);
 
   if (endIndex === -1) {
     return {
       data: {},
-      content: raw,
+      content: normalized,
     };
   }
 
-  const frontMatter = raw.slice(3, endIndex).trim();
-  const content = raw.slice(endIndex + 4).trim();
+  const frontMatter = normalized.slice(3, endIndex).trim();
+  const content = normalized.slice(endIndex + 4).trim();
 
   const data = {};
-  const lines = frontMatter.split("\n");
+  const lines = frontMatter.split(/\r?\n/);
 
   let currentKey = null;
 
@@ -47,18 +52,12 @@ function parseFrontMatter(raw) {
 
     if (!trimmed) continue;
 
-    // Handles arrays like:
-    // tags:
-    //   - MDE
     if (trimmed.startsWith("- ") && currentKey) {
       if (!Array.isArray(data[currentKey])) {
         data[currentKey] = [];
       }
 
-      data[currentKey].push(
-        trimmed.slice(2).trim().replace(/^["']|["']$/g, "")
-      );
-
+      data[currentKey].push(cleanValue(trimmed.slice(2)));
       continue;
     }
 
@@ -67,24 +66,34 @@ function parseFrontMatter(raw) {
     if (separatorIndex === -1) continue;
 
     const key = trimmed.slice(0, separatorIndex).trim();
-    let value = trimmed.slice(separatorIndex + 1).trim();
+    const rawValue = trimmed.slice(separatorIndex + 1).trim();
 
     currentKey = key;
 
-    if (value === "") {
+    if (rawValue === "") {
       data[key] = [];
       continue;
     }
 
-    value = value.replace(/^["']|["']$/g, "");
-
-    data[key] = value;
+    data[key] = cleanValue(rawValue);
   }
 
   return {
     data,
     content,
   };
+}
+
+function getFallbackSummary(content) {
+  return content
+    .replace(/^# .+$/gm, "")
+    .replace(/^## .+$/gm, "")
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/\*\*/g, "")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 32)
+    .join(" ");
 }
 
 export function getAllPosts() {
@@ -95,10 +104,10 @@ export function getAllPosts() {
     return {
       slug,
       content,
-      title: data.title || "Untitled",
+      title: data.title || slug,
       date: data.date || "",
       type: data.type || "Documentation",
-      summary: data.summary || "",
+      summary: data.summary || data.description || getFallbackSummary(content),
       tags: Array.isArray(data.tags) ? data.tags : [],
       products: Array.isArray(data.products) ? data.products : [],
       errorCodes: Array.isArray(data.errorCodes) ? data.errorCodes : [],
