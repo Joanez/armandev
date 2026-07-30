@@ -4,7 +4,7 @@ import { getAllPosts } from "./lib/posts";
 
 export default function App() {
   // You’ll eventually load this from markdown/MDX or a JSON index.
- const entries = getAllPosts().slice(0, 6);
+ const entries = getAllPosts();
 
   const resourceTiles = [
     {
