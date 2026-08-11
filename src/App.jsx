@@ -77,15 +77,19 @@ export default function App() {
     <main className="min-h-screen bg-[#071112] text-white">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5">
-          <Link to="/" className="flex items-center gap-3">
-            <span className="text-2xl font-black tracking-tight">
-              Arman<span className="text-cyan-400">Dev</span>
-            </span>
+          <Link to="/" className="flex items-center gap-4">
+  {logo}
 
-            <span className="hidden md:inline text-white/35">
-              M365 • Intune • Automation
-            </span>
-          </Link>
+  <div>
+    <div className="text-2xl font-black tracking-tight">
+      Arman<span className="text-cyan-400">Dev</span>
+    </div>
+
+    <div className="hidden md:block text-xs text-white/40">
+      M365 • Intune • Automation
+    </div>
+  </div>
+</Link>
 
           <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-white/70">
             <Link to="/" className="hover:text-white transition">
@@ -174,19 +178,15 @@ export default function App() {
 
       <section className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
         <div className="max-w-5xl">
-          <div className="flex items-center gap-5">
-            {logo}
+                <div>
+        <div className="text-3xl font-black">
+          Arman<span className="text-cyan-400">Dev</span>
+        </div>
 
-            <div>
-              <div className="text-3xl font-black">
-                Arman<span className="text-cyan-400">Dev</span>
-              </div>
-
-              <div className="text-white/50">
-                Modern Workplace Engineering
-              </div>
-            </div>
-          </div>
+        <div className="text-white/50">
+          Modern Workplace Engineering
+        </div>
+      </div>
 
           <div className="mt-10 inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-5 py-2 text-cyan-200">
             Microsoft 365 • Endpoint Engineering • Automation
