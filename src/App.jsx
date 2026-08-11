@@ -95,35 +95,36 @@ export default function App() {
             <Link to="/" className="hover:text-white transition">
               Home
             </Link>
+{NAV_GROUPS.map((group) => (
+  <div key={group.title} className="relative group">
+    <button
+      type="button"
+      className="hover:text-white transition"
+    >
+      {group.title}
+    </button>
 
-            {NAV_GROUPS.map((group) => (
-              <div key={group.title} className="relative group">
-                <button
-                  type="button"
-                  className="hover:text-white transition"
-                >
-                  {group.title}
-                </button>
+    <div className="invisible absolute left-0 top-full z-50 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100">
+      <div className="w-80 rounded-2xl border border-white/10 bg-zinc-950/95 p-3 shadow-2xl">
+        {group.items.map((item) => (
+          <Link
+            key={item.slug}
+            to={`/category/${item.slug}`}
+            className="block rounded-xl px-4 py-3 hover:bg-white/[0.06] transition"
+          >
+            <span className="block text-white">
+              {item.name}
+            </span>
 
-                <div className="invisible absolute left-0 top-7 w-80 rounded-2xl border border-white/10 bg-zinc-950/95 p-3 opacity-0 shadow-2xl transition group-hover:visible group-hover:opacity-100">
-                  {group.items.map((item) => (
-                    <Link
-                      key={item.slug}
-                      to={`/category/${item.slug}`}
-                      className="block rounded-xl px-4 py-3 hover:bg-white/[0.06] transition"
-                    >
-                      <span className="block text-white">
-                        {item.name}
-                      </span>
-
-                      <span className="mt-1 block text-xs leading-relaxed text-white/45">
-                        {item.description}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <span className="mt-1 block text-xs leading-relaxed text-white/45">
+              {item.description}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  </div>
+))}
 
             <Link to="/posts" className="hover:text-white transition">
               All Posts
