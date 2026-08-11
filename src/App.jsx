@@ -10,33 +10,6 @@ export default function App() {
 
   const featuredCategories = getFeaturedCategories();
 
-  const resourceTiles = [
-    {
-      title: "Troubleshooting Docs",
-      desc: "Root cause → fix → validation. Built for real enterprise incidents.",
-      meta: "Errors • Logs • Fixes",
-      target: "content",
-    },
-    {
-      title: "Graph & PowerShell Scripts",
-      desc: "Reusable automation patterns for Intune, Entra ID, SharePoint, MDE.",
-      meta: "Copy-first • Production notes",
-      target: "content",
-    },
-    {
-      title: "Power BI Reports",
-      desc: "Models, measures, schema tips, and operational dashboards.",
-      meta: "Compliance • Updates • Inventory",
-      target: "content",
-    },
-    {
-      title: "Projects & Architecture",
-      desc: "Rollouts, design decisions, diagrams, and what worked at scale.",
-      meta: "Runbooks • Monitoring • CAB-ready",
-      target: "content",
-    },
-  ];
-
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
 
@@ -154,10 +127,10 @@ export default function App() {
 
             <button
               type="button"
-              onClick={() => scrollToSection("resources")}
+              onClick={() => scrollToSection("content")}
               className="hover:text-white transition"
             >
-              Resources
+              Latest
             </button>
 
             <button
@@ -199,10 +172,10 @@ export default function App() {
         </div>
       </header>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-6 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
-        <div>
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
+        <div className="max-w-5xl">
           <div className="flex items-center gap-5">
-            <img src={logo} alt="ArmanDev logo" className="h-12 w-auto" />
+            {logo}
 
             <div>
               <div className="text-3xl font-black">
@@ -216,46 +189,53 @@ export default function App() {
           </div>
 
           <div className="mt-10 inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-5 py-2 text-cyan-200">
-            Modern Workplace • Cloud • Endpoint Engineering
+            Microsoft 365 • Endpoint Engineering • Automation
           </div>
 
-          <h1 className="mt-10 max-w-4xl text-6xl font-black leading-tight md:text-7xl">
+          <h1 className="mt-10 max-w-5xl text-6xl font-black leading-tight md:text-7xl">
             Documentation built for{" "}
             <span className="text-cyan-400">enterprise reality</span>
           </h1>
 
-          <p className="mt-8 max-w-3xl text-xl leading-relaxed text-white/65">
-            I document real-world Microsoft 365 issues and the fixes that work
-            at scale: Intune, Autopilot, Entra ID, Graph automation, MDE, Power
-            BI reporting, and operational runbooks.
+          <p className="mt-8 max-w-4xl text-xl leading-relaxed text-white/65">
+            Real-world Microsoft 365 documentation for Intune, Entra ID,
+            Defender, Exchange Online, Teams, Purview, PowerShell, Graph API,
+            Power BI, and endpoint operations.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-4">
             <button
               type="button"
-              onClick={() => scrollToSection("content")}
+              onClick={() => scrollToSection("solutions")}
               className="rounded-2xl bg-cyan-400 px-7 py-4 font-bold text-black hover:bg-cyan-300 transition"
             >
-              Browse Documentation
+              Browse by Solution
             </button>
 
             <button
               type="button"
-              onClick={() => scrollToSection("resources")}
+              onClick={() => scrollToSection("content")}
               className="rounded-2xl border border-white/15 px-7 py-4 font-bold hover:border-cyan-400/40 transition"
             >
-              View Resources
+              Latest Articles
             </button>
+
+            <Link
+              to="/posts"
+              className="rounded-2xl border border-white/15 px-7 py-4 font-bold hover:border-cyan-400/40 transition"
+            >
+              All Posts
+            </Link>
           </div>
 
-          <div className="mt-14 grid max-w-3xl gap-4 sm:grid-cols-3">
+          <div className="mt-14 grid max-w-4xl gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
               <div className="text-white/40">Focus</div>
-              <div className="mt-2 font-bold">M365 Platform</div>
+              <div className="mt-2 font-bold">Microsoft 365</div>
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <div className="text-white/40">Outputs</div>
+              <div className="text-white/40">Content</div>
               <div className="mt-2 font-bold">Docs + Scripts</div>
             </div>
 
@@ -265,42 +245,9 @@ export default function App() {
             </div>
           </div>
         </div>
-
-        <aside className="rounded-3xl border border-white/10 bg-white/[0.06] p-8">
-          <h2 className="text-3xl font-black text-cyan-300">
-            Current Focus
-          </h2>
-
-          <div className="mt-7 space-y-4">
-            {[
-              "Intune remediation at scale",
-              "Firmware and BIOS update automation",
-              "Secure Boot certificate rollout reporting",
-              "Graph exports to SharePoint and Power BI",
-            ].map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-white/10 bg-black/25 p-5 text-white/70"
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 rounded-2xl border border-cyan-400/30 bg-cyan-500/10 p-6">
-            <div className="font-bold text-cyan-200">
-              Tip for readers
-            </div>
-
-            <p className="mt-3 text-white/70">
-              Each entry includes symptoms, root cause, fix, validation, and
-              rollback guidance where applicable.
-            </p>
-          </div>
-        </aside>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-12">
+      <section id="solutions" className="mx-auto max-w-7xl px-6 py-12">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="text-4xl font-black">
@@ -344,40 +291,6 @@ export default function App() {
                 Browse →
               </div>
             </Link>
-          ))}
-        </div>
-      </section>
-
-      <section id="resources" className="mx-auto max-w-7xl px-6 py-12">
-        <h2 className="text-4xl font-black">
-          Resources
-        </h2>
-
-        <p className="mt-3 max-w-3xl text-white/60">
-          Organized for fast lookup: documentation, scripts, reports, and
-          project playbooks.
-        </p>
-
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {resourceTiles.map((tile) => (
-            <button
-              key={tile.title}
-              type="button"
-              onClick={() => scrollToSection(tile.target)}
-              className="text-left rounded-3xl border border-white/10 bg-zinc-950/50 p-6 hover:border-cyan-400/40 transition"
-            >
-              <h3 className="text-xl font-bold">
-                {tile.title}
-              </h3>
-
-              <p className="mt-3 text-white/60">
-                {tile.desc}
-              </p>
-
-              <div className="mt-5 text-sm text-cyan-300">
-                {tile.meta}
-              </div>
-            </button>
           ))}
         </div>
       </section>
