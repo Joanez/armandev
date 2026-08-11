@@ -4,13 +4,137 @@ const modules = import.meta.glob("../contents/posts/*.md", {
   eager: true,
 });
 
+export const NAV_GROUPS = [
+  {
+    title: "Solutions",
+    items: [
+      {
+        name: "Intune",
+        slug: "intune",
+        description:
+          "Endpoint management, compliance, Autopilot, remediation, and device operations.",
+      },
+      {
+        name: "Entra ID",
+        slug: "entra-id",
+        description:
+          "Identity, access, authentication, groups, Conditional Access, and Graph operations.",
+      },
+      {
+        name: "Microsoft Teams",
+        slug: "microsoft-teams",
+        description:
+          "Teams administration, collaboration settings, policies, and troubleshooting.",
+      },
+      {
+        name: "Exchange Online",
+        slug: "exchange-online",
+        description:
+          "Mail flow, mailbox administration, transport, and Exchange Online operations.",
+      },
+      {
+        name: "Purview",
+        slug: "purview",
+        description:
+          "Compliance, data governance, retention, auditing, and information protection.",
+      },
+      {
+        name: "SharePoint",
+        slug: "sharepoint",
+        description:
+          "SharePoint Online, document libraries, permissions, and automation patterns.",
+      },
+      {
+        name: "Defender XDR",
+        slug: "defender-xdr",
+        description:
+          "Security operations, incidents, hunting, XDR workflows, and investigation patterns.",
+      },
+      {
+        name: "Microsoft Defender for Endpoint",
+        slug: "mde",
+        description:
+          "Endpoint security, vulnerability management, device risk, and MDE operations.",
+      },
+    ],
+  },
+  {
+    title: "Automation",
+    items: [
+      {
+        name: "PowerShell",
+        slug: "powershell",
+        description:
+          "Scripts, remediation logic, reporting automation, and admin tooling.",
+      },
+      {
+        name: "Graph API",
+        slug: "graph-api",
+        description:
+          "Microsoft Graph exports, app permissions, automation, and reporting pipelines.",
+      },
+      {
+        name: "Azure Automation",
+        slug: "azure-automation",
+        description:
+          "Runbooks, managed identities, scheduled jobs, and cloud automation.",
+      },
+      {
+        name: "Power BI",
+        slug: "power-bi",
+        description:
+          "Dashboards, Power Query, DAX, compliance reporting, and operational analytics.",
+      },
+    ],
+  },
+];
+
+export const ALL_CATEGORIES = NAV_GROUPS.flatMap((group) =>
+  group.items.map((item) => ({
+    ...item,
+    group: group.title,
+  }))
+);
+
 function filenameToSlug(path) {
   const file = path.split("/").pop() || "";
   return file.replace(/\.md$/, "");
 }
 
+function slugify(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/\+/g, "plus")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function cleanValue(value) {
-  return value.trim().replace(/^["']|["']$/g, "");
+  return String(value || "")
+    .trim()
+    .replace(/^["']|["']$/g, "");
+}
+
+function parseInlineArray(value) {
+  const cleaned = cleanValue(value);
+
+  if (!cleaned.startsWith("[") || !cleaned.endsWith("]")) {
+    return null;
+  }
+
+  return cleaned
+    .slice(1, -1)
+    .split(",")
+    .map((item) => cleanValue(item))
+    .filter(Boolean);
+}
+
+function ensureArray(value) {
+  if (Array.isArray(value)) return value;
+  if (!value) return [];
+  return [value];
 }
 
 function parseFrontMatter(raw) {
@@ -41,7 +165,6 @@ function parseFrontMatter(raw) {
 
   const frontMatter = normalized.slice(3, endIndex).trim();
   const content = normalized.slice(endIndex + 4).trim();
-
   const data = {};
   const lines = frontMatter.split(/\r?\n/);
 
@@ -75,7 +198,9 @@ function parseFrontMatter(raw) {
       continue;
     }
 
-    data[key] = cleanValue(rawValue);
+    const inlineArray = parseInlineArray(rawValue);
+
+    data[key] = inlineArray || cleanValue(rawValue);
   }
 
   return {
@@ -96,27 +221,57 @@ function getFallbackSummary(content) {
     .join(" ");
 }
 
-export function getAllPosts() {
-  const posts = Object.entries(modules).map(([path, raw]) => {
-    const { data, content } = parseFrontMatter(raw);
-    const slug = data.slug || filenameToSlug(path);
+function buildPost(path, raw) {
+  const { data, content } = parseFrontMatter(raw);
+  const slug = data.slug || filenameToSlug(path);
 
-    return {
-      slug,
-      content,
-      title: data.title || slug,
-      date: data.date || "",
-      type: data.type || "Documentation",
-      summary: data.summary || data.description || getFallbackSummary(content),
-      tags: Array.isArray(data.tags) ? data.tags : [],
-      products: Array.isArray(data.products) ? data.products : [],
-      errorCodes: Array.isArray(data.errorCodes) ? data.errorCodes : [],
-    };
-  });
+  const category = data.category || "";
+  const tags = ensureArray(data.tags);
+  const products = ensureArray(data.products);
+
+  return {
+    slug,
+    content,
+    title: data.title || slug,
+    date: data.date || "",
+    type: data.type || "Documentation",
+    category,
+    categorySlug: slugify(category),
+    summary: data.summary || data.description || getFallbackSummary(content),
+    tags,
+    tagSlugs: tags.map(slugify),
+    products,
+    productSlugs: products.map(slugify),
+    errorCodes: ensureArray(data.errorCodes),
+  };
+}
+
+export function getAllPosts() {
+  const posts = Object.entries(modules).map(([path, raw]) =>
+    buildPost(path, raw)
+  );
 
   return posts.sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
 export function getPostBySlug(slug) {
-  return getAllPosts().find((p) => p.slug === slug);
+  return getAllPosts().find((post) => post.slug === slug);
+}
+
+export function getCategoryBySlug(slug) {
+  return ALL_CATEGORIES.find((category) => category.slug === slug);
+}
+
+export function getPostsByCategorySlug(slug) {
+  return getAllPosts().filter((post) => {
+    return (
+      post.categorySlug === slug ||
+      post.productSlugs.includes(slug) ||
+      post.tagSlugs.includes(slug)
+    );
+  });
+}
+
+export function getFeaturedCategories() {
+  return ALL_CATEGORIES;
 }

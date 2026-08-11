@@ -1,114 +1,206 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllPosts } from "../lib/posts";
+import { getAllPosts, getFeaturedCategories } from "../lib/posts";
 
 export default function Posts() {
   const posts = getAllPosts();
-  const [query, setQuery] = useState("");
-  const [tag, setTag] = useState("All");
+  const categories = getFeaturedCategories();
 
-  const allTags = useMemo(() => {
-    const s = new Set();
-    posts.forEach((p) => (p.tags || []).forEach((t) => s.add(t)));
-    return ["All", ...Array.from(s).sort()];
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("All");
+
+  const allFilters = useMemo(() => {
+    const filters = new Set();
+
+    posts.forEach((post) => {
+      if (post.category) filters.add(post.category);
+
+      (post.products || []).forEach((product) => {
+        filters.add(product);
+      });
+
+      (post.tags || []).forEach((tag) => {
+        filters.add(tag);
+      });
+    });
+
+    return ["All", ...Array.from(filters).sort()];
   }, [posts]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
+
     return posts
-      .filter((p) => (tag === "All" ? true : (p.tags || []).includes(tag)))
-      .filter((p) => {
-        if (!q) return true;
+      .filter((post) => {
+        if (filter === "All") return true;
+
         return (
-          (p.title || "").toLowerCase().includes(q) ||
-          (p.summary || "").toLowerCase().includes(q) ||
-          (p.type || "").toLowerCase().includes(q) ||
-          (p.tags || []).join(" ").toLowerCase().includes(q) ||
-          (p.errorCodes || []).join(" ").toLowerCase().includes(q) ||
-          (p.products || []).join(" ").toLowerCase().includes(q)
+          post.category === filter ||
+          (post.products || []).includes(filter) ||
+          (post.tags || []).includes(filter)
+        );
+      })
+      .filter((post) => {
+        if (!q) return true;
+
+        return (
+          (post.title || "").toLowerCase().includes(q) ||
+          (post.summary || "").toLowerCase().includes(q) ||
+          (post.type || "").toLowerCase().includes(q) ||
+          (post.category || "").toLowerCase().includes(q) ||
+          (post.tags || []).join(" ").toLowerCase().includes(q) ||
+          (post.errorCodes || []).join(" ").toLowerCase().includes(q) ||
+          (post.products || []).join(" ").toLowerCase().includes(q)
         );
       });
-  }, [posts, query, tag]);
+  }, [posts, query, filter]);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16">
-      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-        <div>
-          <h1 className="text-3xl font-bold">Posts</h1>
-          <p className="text-white/60 mt-2">
-            Troubleshooting, scripts, reports, and project notes.
-          </p>
-        </div>
-
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search: error code, product, tag..."
-          className="w-full lg:w-96 bg-black/40 border border-white/10 focus:border-cyan-400/40 outline-none rounded-xl px-4 py-3 text-sm"
-        />
-      </div>
-
-      <div className="flex flex-wrap gap-2 mt-6">
-        {allTags.map((t) => {
-          const active = t === tag;
-          return (
-            <button
-              key={t}
-              onClick={() => setTag(t)}
-              className={[
-                "text-sm px-3 py-2 rounded-xl border transition",
-                active
-                  ? "border-cyan-400/50 bg-cyan-500/10 text-cyan-200"
-                  : "border-white/10 bg-black/20 text-white/70 hover:border-white/25",
-              ].join(" ")}
-            >
-              {t}
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6 mt-10">
-        {filtered.map((p) => (
-          <Link
-            key={p.slug}
-            to={`/posts/${p.slug}`}
-            className="block border border-white/10 bg-white/5 p-6 rounded-2xl hover:border-cyan-400/40"
-          >
-            <div className="flex items-center justify-between text-xs text-white/50">
-              <span className="uppercase tracking-wide">{p.type}</span>
-              <span>{p.date}</span>
-            </div>
-            <h2 className="text-xl font-semibold mt-3">{p.title}</h2>
-            <p className="text-white/60 mt-2 leading-relaxed">{p.summary}</p>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {(p.tags || []).map((t) => (
-                <span
-                  key={t}
-                  className="text-xs text-white/70 border border-white/10 bg-white/5 px-2.5 py-1 rounded-full"
-                >
-                  {t}
-                </span>
-              ))}
-              {(p.errorCodes || []).map((e) => (
-                <span
-                  key={e}
-                  className="text-xs text-cyan-200 border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 rounded-full"
-                >
-                  {e}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-5 text-sm text-cyan-300">Read →</div>
+    <main className="min-h-screen bg-[#071112] text-white px-6 py-10">
+      <div className="max-w-6xl mx-auto">
+        <nav className="flex items-center justify-between gap-4">
+          <Link to="/" className="text-2xl font-black tracking-tight">
+            Arman<span className="text-cyan-400">Dev</span>
           </Link>
-        ))}
-      </div>
 
-      {filtered.length === 0 && (
-        <div className="mt-10 text-white/60">No results.</div>
-      )}
-    </div>
+          <Link to="/" className="text-sm text-white/70 hover:text-white">
+            Home
+          </Link>
+        </nav>
+
+        <section className="mt-12">
+          <p className="text-sm uppercase tracking-[0.25em] text-cyan-300">
+            Documentation Library
+          </p>
+
+          <h1 className="mt-3 text-5xl font-black">
+            All Posts
+          </h1>
+
+          <p className="mt-4 text-white/60 max-w-3xl">
+            Troubleshooting notes, scripts, reports, and project documentation
+            organized by Microsoft 365 solution, automation area, product, and
+            tag.
+          </p>
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+          <h2 className="text-lg font-bold">
+            Browse by area
+          </h2>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <Link
+                key={category.slug}
+                to={`/category/${category.slug}`}
+                className="rounded-full border border-white/10 bg-black/30 px-4 py-2 text-sm text-white/70 hover:border-cyan-400/40 hover:text-cyan-200 transition"
+              >
+                {category.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-8 flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search: product, tag, error code, keyword..."
+            className="w-full lg:w-96 bg-black/40 border border-white/10 focus:border-cyan-400/40 outline-none rounded-xl px-4 py-3 text-sm"
+          />
+
+          <div className="flex flex-wrap gap-2">
+            {allFilters.map((item) => {
+              const active = item === filter;
+
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setFilter(item)}
+                  className={[
+                    "text-sm px-3 py-2 rounded-xl border transition",
+                    active
+                      ? "border-cyan-400/50 bg-cyan-500/10 text-cyan-200"
+                      : "border-white/10 bg-black/20 text-white/70 hover:border-white/25",
+                  ].join(" ")}
+                >
+                  {item}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="mt-8 grid md:grid-cols-2 gap-5">
+          {filtered.map((post) => (
+            <Link
+              key={post.slug}
+              to={`/post/${post.slug}`}
+              className="group rounded-3xl border border-white/10 bg-zinc-950/50 p-6 hover:border-cyan-400/40 transition"
+            >
+              <div className="flex items-center justify-between gap-4 text-xs text-white/45">
+                <span>{post.type || "Documentation"}</span>
+                <span>{post.date || ""}</span>
+              </div>
+
+              <h2 className="mt-4 text-2xl font-bold group-hover:text-cyan-300 transition">
+                {post.title}
+              </h2>
+
+              <p className="mt-3 text-white/60 leading-relaxed">
+                {post.summary}
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                {post.category && (
+                  <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-200">
+                    {post.category}
+                  </span>
+                )}
+
+                {(post.products || []).map((product) => (
+                  <span
+                    key={product}
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/60"
+                  >
+                    {product}
+                  </span>
+                ))}
+
+                {(post.tags || []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/60"
+                  >
+                    {tag}
+                  </span>
+                ))}
+
+                {(post.errorCodes || []).map((errorCode) => (
+                  <span
+                    key={errorCode}
+                    className="rounded-full border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-xs text-amber-200"
+                  >
+                    {errorCode}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-6 text-cyan-300 text-sm font-semibold">
+                Read →
+              </div>
+            </Link>
+          ))}
+        </section>
+
+        {filtered.length === 0 && (
+          <div className="mt-10 rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-white/60">
+            No results.
+          </div>
+        )}
+      </div>
+    </main>
   );
 }

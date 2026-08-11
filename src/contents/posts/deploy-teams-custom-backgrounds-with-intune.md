@@ -2,6 +2,8 @@
 title: "Deploy Teams Custom Backgrounds with Intune"
 description: "Community troubleshooting article"
 date: 2026-07-16
+type: Documentation
+category: Intune
 categories: [Intune]
 tags: [community, troubleshooting]
 layout: post
