@@ -176,7 +176,7 @@ export default function App() {
         </div>
       </header>
 
-      <section className="mx-auto max-w-7xl px-6 py-10 lg:py-14">
+      <section className="mx-auto max-w-7xl px-6 py-8 lg:py-10">
         <div className="max-w-5xl">
                 <div>
         <div className="text-3xl font-black">
