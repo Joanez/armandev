@@ -177,16 +177,20 @@ export default function App() {
       </header>
 
       <section className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
-        <div className="max-w-5xl">
-                <div>
-        <div className="text-3xl font-black">
-          Arman<span className="text-cyan-400">Dev</span>
-        </div>
+          <div className="max-w-5xl">
+            <div className="flex items-center gap-5">
+              <img src={logo} alt="ArmanDev logo" className="h-12 w-auto" />
 
-        <div className="text-white/50">
-          Modern Workplace Engineering
-        </div>
-      </div>
+              <div>
+                <div className="text-3xl font-black">
+                  Arman<span className="text-cyan-400">Dev</span>
+                </div>
+
+                <div className="text-white/50">
+                  Modern Workplace Engineering
+                </div>
+              </div>
+            </div>
 
           <div className="mt-10 inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-5 py-2 text-cyan-200">
             Microsoft 365 • Endpoint Engineering • Automation
