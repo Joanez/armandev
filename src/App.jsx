@@ -198,9 +198,9 @@ export default function App() {
           </h1>
 
           <p className="mt-8 max-w-4xl text-xl leading-relaxed text-white/65">
-            Real-world Microsoft 365 documentation for Intune, Entra ID,
-            Defender, Exchange Online, Teams, Purview, PowerShell, Graph API,
-            Power BI, and endpoint operations.
+            Practical Microsoft 365 documentation, troubleshooting guides,
+            automation scripts, and reporting solutions built from real
+            enterprise environments.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-4">
@@ -226,23 +226,6 @@ export default function App() {
             >
               All Posts
             </Link>
-          </div>
-
-          <div className="mt-14 grid max-w-4xl gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <div className="text-white/40">Focus</div>
-              <div className="mt-2 font-bold">Microsoft 365</div>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <div className="text-white/40">Content</div>
-              <div className="mt-2 font-bold">Docs + Scripts</div>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <div className="text-white/40">Style</div>
-              <div className="mt-2 font-bold">Problem → Fix</div>
-            </div>
           </div>
         </div>
       </section>
