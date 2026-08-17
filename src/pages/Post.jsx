@@ -213,8 +213,8 @@ export default function Post() {
     return (
       <div className="min-h-screen bg-zinc-950 text-white">
         <main className="max-w-3xl mx-auto px-6 py-16">
-          <Link to="/" className="text-cyan-300 hover:text-cyan-200">
-            ← Back
+          <Link to={`/category/${post.categorySlug}`} className="text-cyan-300 hover:text-cyan-200">
+            ← Back to {post.category}
           </Link>
 
           <h1 className="mt-10 text-4xl font-bold">Post not found</h1>
