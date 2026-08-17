@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { getCategoryBySlug, getPostsByCategorySlug } from "../lib/posts";
+import Navbar from "../components/Navbar";
 
 export default function Category() {
   const { slug } = useParams();
@@ -34,23 +35,10 @@ export default function Category() {
   }
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-[#071112] text-white px-6 py-10">
       <div className="max-w-6xl mx-auto">
-        <nav className="flex items-center justify-between gap-4">
-          <Link to="/" className="text-2xl font-black tracking-tight">
-            Arman<span className="text-cyan-400">Dev</span>
-          </Link>
-
-          <div className="flex items-center gap-4 text-sm">
-            <Link to="/" className="text-white/70 hover:text-white">
-              Home
-            </Link>
-
-            <Link to="/posts" className="text-white/70 hover:text-white">
-              All Posts
-            </Link>
-          </div>
-        </nav>
 
         <section className="mt-12 rounded-3xl border border-white/10 bg-white/[0.03] p-8">
           <p className="text-sm uppercase tracking-[0.25em] text-cyan-300">
@@ -158,5 +146,6 @@ products:
         )}
       </div>
     </main>
+    </>
   );
 }

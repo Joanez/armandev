@@ -38,7 +38,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-zinc-950/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5">
         <Link to="/" className="flex items-center gap-3">
-          {logo}
+          <img src={logo} alt="ArmanDev logo" className="h-10 w-10 rounded-full" />
 
           <div>
             <div className="text-2xl font-black tracking-tight">
