@@ -32,7 +32,7 @@ jobs:
 
       - name: Build site (production base for GitHub Pages)
         # Pass --base so built assets reference the repo subpath when deployed
-        run: npm run build -- --base /armandev/
+        run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
