@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import logo from "./assets/logo.png";
 import { Link } from "react-router-dom";
-import { getAllPosts, NAV_GROUPS, getFeaturedCategories } from "./lib/posts";
+import { getAllPosts, getFeaturedCategories } from "./lib/posts";
+import Navbar from "./components/Navbar";
 
 export default function App() {
   const entries = getAllPosts()
@@ -75,107 +75,7 @@ export default function App() {
 
   return (
     <main className="min-h-screen bg-[#071112] text-white">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5">
-          <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="ArmanDev logo" className="h-10 w-auto" />
-
-            <div>
-              <span className="text-2xl font-black tracking-tight">
-                Arman<span className="text-cyan-400">Dev</span>
-              </span>
-
-              <div className="hidden md:block text-xs text-white/40">
-                M365 • Intune • Automation
-              </div>
-            </div>
-          </Link>
-
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-white/70">
-            <Link to="/" className="hover:text-white transition">
-              Home
-            </Link>
-{NAV_GROUPS.map((group) => (
-  <div key={group.title} className="relative group">
-    <button
-      type="button"
-      className="hover:text-white transition"
-    >
-      {group.title}
-    </button>
-
-    <div className="invisible absolute left-0 top-full z-50 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100">
-      <div className="w-80 rounded-2xl border border-white/10 bg-zinc-950/95 p-3 shadow-2xl">
-        {group.items.map((item) => (
-          <Link
-            key={item.slug}
-            to={`/category/${item.slug}`}
-            className="block rounded-xl px-4 py-3 hover:bg-white/[0.06] transition"
-          >
-            <span className="block text-white">
-              {item.name}
-            </span>
-
-            <span className="mt-1 block text-xs leading-relaxed text-white/45">
-              {item.description}
-            </span>
-          </Link>
-        ))}
-      </div>
-    </div>
-  </div>
-))}
-
-            <Link to="/posts" className="hover:text-white transition">
-              All Posts
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => scrollToSection("content")}
-              className="hover:text-white transition"
-            >
-              Latest
-            </button>
-
-            <button
-              type="button"
-              onClick={() => scrollToSection("about")}
-              className="hover:text-white transition"
-            >
-              About
-            </button>
-
-            <button
-              type="button"
-              onClick={() => scrollToSection("contact")}
-              className="hover:text-white transition"
-            >
-              Contact
-            </button>
-          </nav>
-
-          <div className="hidden md:flex items-center gap-3">
-            <a
-              href="https://github.com/Joanez/armandev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition"
-            >
-              GitHub
-            </a>
-
-            <a
-              href="https://www.linkedin.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition"
-            >
-              LinkedIn
-            </a>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <section className="mx-auto max-w-7xl px-6 py-8 lg:py-10">
         <div className="max-w-5xl">

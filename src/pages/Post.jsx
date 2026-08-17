@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { getPostBySlug } from "../lib/posts";
+import Navbar from "../components/Navbar";
 
 function renderInlineMarkdown(text) {
   return renderInlineElements(text);
@@ -230,7 +231,7 @@ export default function Post() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <div className="fixed inset-0 bg-cyan-500/5 blur-3xl pointer-events-none" />
-
+<Navbar />
       <main className="relative z-10 max-w-4xl mx-auto px-6 py-16">
         <Link to="/" className="text-cyan-300 hover:text-cyan-200">
           ← Back
