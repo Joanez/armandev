@@ -80,7 +80,7 @@ function MarkdownRenderer({ content }) {
       elements.push(
         <ul key={`ul-${elements.length}`} className="list-disc pl-6 my-4 space-y-2">
           {listItems.map((item, index) => (
-            <li key={index}>{renderInlineElements(item)}</li>
+            <li key={index}>{renderInlineMarkdown(item)}</li>
           ))}
         </ul>
       );
@@ -147,7 +147,7 @@ function MarkdownRenderer({ content }) {
           key={index}
           className="mt-10 mb-5 text-4xl font-bold leading-tight text-white"
         >
-          {renderInlineElements(trimmed.replace(/^# /, ""))}
+          {renderInlineMarkdown(trimmed.replace(/^# /, ""))}
         </h1>
       );
 
@@ -162,7 +162,7 @@ function MarkdownRenderer({ content }) {
           key={index}
           className="mt-10 mb-4 text-2xl font-bold text-white"
         >
-          {renderInlineElements(trimmed.replace(/^## /, ""))}
+          {renderInlineMarkdown(trimmed.replace(/^## /, ""))}
         </h2>
       );
 
@@ -177,7 +177,7 @@ function MarkdownRenderer({ content }) {
           key={index}
           className="mt-8 mb-3 text-xl font-semibold text-cyan-200"
         >
-          {renderInlineElements(trimmed.replace(/^### /, ""))}
+          {renderInlineMarkdown(trimmed.replace(/^### /, ""))}
         </h3>
       );
 
@@ -193,7 +193,7 @@ function MarkdownRenderer({ content }) {
 
     elements.push(
       <p key={index} className="my-4 leading-8 text-white/75">
-        {renderInlineElements(trimmed)}
+        {renderInlineMarkdown(trimmed)}
       </p>
     );
   });

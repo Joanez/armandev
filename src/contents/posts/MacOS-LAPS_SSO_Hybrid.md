@@ -53,7 +53,7 @@ Deploying Platform SSO after the local administrator account creation, domain jo
 
 ## Step 1 - Deploy macOS LAPS First
 
-Create the local administrator account using the Intune macOS LAPS policy.
+Create the local administrator account using the Intune macOS LAPS policy1.
 
 ![macOS LAPS Configuration](/images/intune/macos-laps-sso/laps-configuration.png)
 
