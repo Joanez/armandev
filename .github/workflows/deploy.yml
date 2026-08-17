@@ -30,8 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build site
-        run: npm run build
+      - name: Build site (production base for GitHub Pages)
+        # Pass --base so built assets reference the repo subpath when deployed
+        run: npm run build -- --base /armandev/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

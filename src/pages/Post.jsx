@@ -2,17 +2,65 @@ import { Link, useParams } from "react-router-dom";
 import { getPostBySlug } from "../lib/posts";
 
 function renderInlineMarkdown(text) {
+  return renderInlineElements(text);
+}
+
+function renderInlineElements(text) {
   if (!text) return "";
 
-  const parts = text.split(/(\*\*.*?\*\*)/g);
+  const base = import.meta.env.BASE_URL || "/";
 
-  return parts.map((part, index) => {
-    if (part.startsWith("**") && part.endsWith("**")) {
-      return <strong key={index}>{part.slice(2, -2)}</strong>;
+  // Find image markdown tokens and split the text accordingly
+  const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = imageRegex.exec(text)) !== null) {
+    const idx = match.index;
+    if (idx > lastIndex) {
+      parts.push(text.slice(lastIndex, idx));
     }
 
-    return part;
+    const alt = match[1] || "";
+    let src = match[2] || "";
+    if (src.startsWith("/")) {
+      src = (base.replace(/\/$/, "") || "") + src;
+    }
+
+    parts.push({ type: "img", alt, src });
+    lastIndex = idx + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  // Convert parts to React nodes, handling bold **text**
+  const nodes = [];
+  parts.forEach((part, i) => {
+    if (typeof part === "string") {
+      const boldParts = part.split(/(\*\*.*?\*\*)/g);
+      boldParts.forEach((bp, j) => {
+        if (bp.startsWith("**") && bp.endsWith("**")) {
+          nodes.push(<strong key={`b-${i}-${j}`}>{bp.slice(2, -2)}</strong>);
+        } else {
+          nodes.push(bp);
+        }
+      });
+    } else if (part.type === "img") {
+      nodes.push(
+        <img
+          key={`img-${i}`}
+          src={part.src}
+          alt={part.alt}
+          className="my-6 w-full rounded-lg border border-white/10"
+        />
+      );
+    }
   });
+
+  return nodes;
 }
 
 function MarkdownRenderer({ content }) {
@@ -32,7 +80,7 @@ function MarkdownRenderer({ content }) {
       elements.push(
         <ul key={`ul-${elements.length}`} className="list-disc pl-6 my-4 space-y-2">
           {listItems.map((item, index) => (
-            <li key={index}>{renderInlineMarkdown(item)}</li>
+            <li key={index}>{renderInlineElements(item)}</li>
           ))}
         </ul>
       );
@@ -99,7 +147,7 @@ function MarkdownRenderer({ content }) {
           key={index}
           className="mt-10 mb-5 text-4xl font-bold leading-tight text-white"
         >
-          {renderInlineMarkdown(trimmed.replace(/^# /, ""))}
+          {renderInlineElements(trimmed.replace(/^# /, ""))}
         </h1>
       );
 
@@ -114,7 +162,7 @@ function MarkdownRenderer({ content }) {
           key={index}
           className="mt-10 mb-4 text-2xl font-bold text-white"
         >
-          {renderInlineMarkdown(trimmed.replace(/^## /, ""))}
+          {renderInlineElements(trimmed.replace(/^## /, ""))}
         </h2>
       );
 
@@ -129,7 +177,7 @@ function MarkdownRenderer({ content }) {
           key={index}
           className="mt-8 mb-3 text-xl font-semibold text-cyan-200"
         >
-          {renderInlineMarkdown(trimmed.replace(/^### /, ""))}
+          {renderInlineElements(trimmed.replace(/^### /, ""))}
         </h3>
       );
 
@@ -145,7 +193,7 @@ function MarkdownRenderer({ content }) {
 
     elements.push(
       <p key={index} className="my-4 leading-8 text-white/75">
-        {renderInlineMarkdown(trimmed)}
+        {renderInlineElements(trimmed)}
       </p>
     );
   });
