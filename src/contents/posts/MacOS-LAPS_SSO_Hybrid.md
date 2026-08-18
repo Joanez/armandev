@@ -226,9 +226,9 @@ In some cases, Platform SSO may stop working after a macOS update even though:
 
 Symptoms may include:
 
-- `POUserStateNeedsRegistration`
+- "POUserStateNeedsRegistration"
 - "Registration failed and will automatically retry"
-- `Code=-1004`
+- "Code=-1004"
 - Missing Platform SSO user configuration
 
-➡️ **[Fix: Platform SSO Registration Failed After macOS Update](/src/contents/posts/fix-platform-sso-registration-failed)
+➡️ ![Fix: Platform SSO Registration Failed After macOS Update](/src/contents/posts/fix-platform-sso-registration-failed)
