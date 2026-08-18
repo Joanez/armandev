@@ -213,5 +213,22 @@ This deployment order resulted in successful LAPS management, successful Platfor
 
 ---
 
-## Related Article
- [Platform SSO Registration Failed Troubleshooting](/src/contents/posts/fix-platform-sso-registration-failed)
+## Common Issues
+
+### Platform SSO registration fails after a macOS update
+
+In some cases, Platform SSO may stop working after a macOS update even though:
+
+- The device remains enrolled in Intune
+- Company Portal is still installed
+- The Platform SSO profile is present
+- The device remains compliant
+
+Symptoms may include:
+
+- `POUserStateNeedsRegistration`
+- "Registration failed and will automatically retry"
+- `Code=-1004`
+- Missing Platform SSO user configuration
+
+➡️ **[Fix: Platform SSO Registration Failed After macOS Update](/src/contents/posts/fix-platform-sso-registration-failed)
