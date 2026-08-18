@@ -210,3 +210,8 @@ Delaying Platform SSO until after the domain join and first user sign-in consist
 For hybrid macOS deployments managed through Intune, deploy macOS LAPS first, complete the Active Directory join process, and assign Platform SSO only after the device has been fully onboarded.
 
 This deployment order resulted in successful LAPS management, successful Platform SSO registration, and proper Company Portal enrollment.
+
+---
+
+## Related Article
+ [Platform SSO Registration Failed Troubleshooting](/src/contents/posts/fix-platform-sso-registration-failed)
