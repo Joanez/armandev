@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 
-export default function Comments(slug) {
+export default function Comments({ slug }) {
   const commentsRef = useRef(null);
 
   useEffect(() => {
-    if (!commentsRef.current) return;
+    if (!commentsRef.current || !slug) return;
 
     commentsRef.current.innerHTML = "";
 
@@ -18,8 +18,11 @@ export default function Comments(slug) {
     script.setAttribute("data-repo-id", "R_kgDOSQJAxA");
     script.setAttribute("data-category", "General");
     script.setAttribute("data-category-id", "DIC_kwDOSQJAxM4DDuOI");
+
+    // Use the article slug as the unique discussion identifier
     script.setAttribute("data-mapping", "specific");
     script.setAttribute("data-term", slug);
+
     script.setAttribute("data-strict", "0");
     script.setAttribute("data-reactions-enabled", "1");
     script.setAttribute("data-emit-metadata", "0");
@@ -28,7 +31,13 @@ export default function Comments(slug) {
     script.setAttribute("data-lang", "en");
 
     commentsRef.current.appendChild(script);
-  }, []);
+
+    return () => {
+      if (commentsRef.current) {
+        commentsRef.current.innerHTML = "";
+      }
+    };
+  }, [slug]);
 
   return (
     <section className="mt-16 border-t border-white/10 pt-10">
