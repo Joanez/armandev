@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { getPostBySlug } from "../lib/posts";
 import Navbar from "../components/Navbar";
+import Comments from "../components/Comments";
 
 function renderInlineMarkdown(text) {
   return renderInlineElements(text);
@@ -351,6 +352,7 @@ export default function Post() {
 
           <div className="mt-12 border-t border-white/10 pt-10">
             <MarkdownRenderer content={post.content} />
+            <Comments />
           </div>
         </article>
       </main>
