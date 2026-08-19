@@ -11,57 +11,134 @@ function renderInlineElements(text) {
 
   const base = import.meta.env.BASE_URL || "/";
 
-  // Find image markdown tokens and split the text accordingly
-  const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+  /*
+    Supports:
+    - Images: /images/example.png
+    - Links: /post/example-slug
+    - Bold: **bold text**
+  */
+
+  const tokenRegex = /(!\[([^\]]*)\]\(([^)]+)\))|(\[([^\]]+)\]\(([^)]+)\))/g;
+
   const parts = [];
   let lastIndex = 0;
   let match;
 
-  while ((match = imageRegex.exec(text)) !== null) {
-    const idx = match.index;
-    if (idx > lastIndex) {
-      parts.push(text.slice(lastIndex, idx));
+  while ((match = tokenRegex.exec(text)) !== null) {
+    const index = match.index;
+
+    if (index > lastIndex) {
+      parts.push({
+        type: "text",
+        value: text.slice(lastIndex, index),
+      });
     }
 
-    const alt = match[1] || "";
-    let src = match[2] || "";
-    if (src.startsWith("/")) {
-      src = (base.replace(/\/$/, "") || "") + src;
+    // Image markdown: src
+    if (match[1]) {
+      const alt = match[2] || "";
+      let src = match[3] || "";
+
+      if (src.startsWith("/")) {
+        src = (base.replace(/\/$/, "") || "") + src;
+      }
+
+      parts.push({
+        type: "img",
+        alt,
+        src,
+      });
     }
 
-    parts.push({ type: "img", alt, src });
-    lastIndex = idx + match[0].length;
+    // Link markdown: url
+    if (match[4]) {
+      const label = match[5] || "";
+      const href = match[6] || "";
+
+      parts.push({
+        type: "link",
+        label,
+        href,
+      });
+    }
+
+    lastIndex = index + match[0].length;
   }
 
   if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
+    parts.push({
+      type: "text",
+      value: text.slice(lastIndex),
+    });
   }
 
-  // Convert parts to React nodes, handling bold **text**
-  const nodes = [];
-  parts.forEach((part, i) => {
-    if (typeof part === "string") {
-      const boldParts = part.split(/(\*\*.*?\*\*)/g);
-      boldParts.forEach((bp, j) => {
-        if (bp.startsWith("**") && bp.endsWith("**")) {
-          nodes.push(<strong key={`b-${i}-${j}`}>{bp.slice(2, -2)}</strong>);
-        } else {
-          nodes.push(bp);
-        }
-      });
-    } else if (part.type === "img") {
-      nodes.push(
+  function renderBoldText(value, keyPrefix) {
+    const boldParts = value.split(/(\*\*.*?\*\*)/g);
+
+    return boldParts.map((part, index) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return (
+          <strong key={`${keyPrefix}-bold-${index}`}>
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+
+      return part;
+    });
+  }
+
+  return parts.map((part, index) => {
+    if (part.type === "text") {
+      return (
+        <span key={`text-${index}`}>
+          {renderBoldText(part.value, `text-${index}`)}
+        </span>
+      );
+    }
+
+    if (part.type === "img") {
+      return (
         <img
-          key={`img-${i}`}
+          key={`img-${index}`}
           src={part.src}
           alt={part.alt}
-          className="my-6 w-full rounded-lg border border-white/10"
+          className="my-6 rounded-2xl border border-white/10 bg-black/50 p-4 text-sm text-cyan-100"
         />
       );
     }
-  });
 
-  return nodes;
+    if (part.type === "link") {
+      const isExternal =
+        part.href.startsWith("http://") || part.href.startsWith("https://");
+
+      if (isExternal) {
+        return (
+          <a
+            key={`link-${index}`}
+            href={part.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-300 underline underline-offset-4 hover:text-cyan-200"
+          >
+            {renderBoldText(part.label, `link-${index}`)}
+          </a>
+        );
+      }
+
+      return (
+        <Link
+          key={`link-${index}`}
+          to={part.href}
+          className="text-cyan-300 underline underline-offset-4 hover:text-cyan-200"
+        >
+          {renderBoldText(part.label, `link-${index}`)}
+        </Link>
+      );
+    }
+
+    return null;
+  });
 }
 
 function MarkdownRenderer({ content }) {

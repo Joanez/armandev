@@ -231,4 +231,4 @@ Symptoms may include:
 - "Code=-1004"
 - Missing Platform SSO user configuration
 
-➡️ [Fix: Platform SSO Registration Failed After macOS Update](#/post/fix-platform-sso-registration-failed)
+➡️ [Fix: Platform SSO Registration Failed After macOS Update](/post/fix-platform-sso-registration-failed)
