@@ -19,7 +19,7 @@ export default function Comments(slug) {
     script.setAttribute("data-category", "General");
     script.setAttribute("data-category-id", "DIC_kwDOSQJAxM4DDuOI");
     script.setAttribute("data-mapping", "specific");
-    script.setAttribute("data-term", slug.slug);
+    script.setAttribute("data-term", slug);
     script.setAttribute("data-strict", "0");
     script.setAttribute("data-reactions-enabled", "1");
     script.setAttribute("data-emit-metadata", "0");

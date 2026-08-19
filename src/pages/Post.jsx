@@ -352,7 +352,7 @@ export default function Post() {
 
           <div className="mt-12 border-t border-white/10 pt-10">
             <MarkdownRenderer content={post.content} />
-            <Comments />
+            <Comments slug={slug} />
           </div>
         </article>
       </main>
