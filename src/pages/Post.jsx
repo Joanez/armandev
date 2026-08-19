@@ -312,7 +312,7 @@ export default function Post() {
 <Navbar />
       <main className="relative z-10 max-w-4xl mx-auto px-6 py-16">
         <Link to="/" className="text-cyan-300 hover:text-cyan-200">
-          ← Back
+          ← Back to {post.category}
         </Link>
 
         <article className="mt-14">
