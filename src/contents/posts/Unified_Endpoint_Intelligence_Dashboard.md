@@ -2,15 +2,16 @@
 title: Unified Endpoint Intelligence Dashboard
 description: Consolidating Intune, Entra ID, Software Inventory, Update Compliance, and Security Metrics into a Single Power BI Solution
 date: 2026-08-25
-category: Power BI
+category: Automation
 tags:
   - Power BI
+  - Automation
   - Microsoft Intune
   - Entra ID
+  - Microsoft Graph
+  - Azure Automation
   - Endpoint Management
   - Security
-  - Microsoft Graph
-  - Automation
   - Reporting
 ---
 
@@ -18,228 +19,349 @@ tags:
 
 ## Overview
 
-Modern endpoint management teams often need to work across multiple portals, dashboards, and reporting platforms to understand the overall health of their environment.
+Modern endpoint management environments generate large amounts of operational, security, compliance, and inventory data. Unfortunately, this information is often spread across multiple administration portals, reporting platforms, and management systems.
 
-Information related to operating system updates, device compliance, software inventory, authentication methods, and endpoint security is frequently scattered across multiple systems. This creates reporting silos and makes it difficult to obtain a clear operational picture without significant manual effort.
+Administrators frequently need to switch between different tools to answer basic operational questions:
 
-To address this challenge, I designed and developed a **Unified Endpoint Intelligence Dashboard** in Power BI that consolidates endpoint management, security, and operational data into a single reporting platform.
+- Are devices up to date?
+- What update rings are currently being deployed?
+- Which devices are non-compliant?
+- Which applications require updates?
+- How many users have adopted passwordless authentication?
+- Which devices have enrollment issues?
 
-The objective was straightforward:
+To address this challenge, I designed and implemented a **Unified Endpoint Intelligence Dashboard**, a centralized reporting solution that consolidates endpoint management, security, software inventory, update compliance, and authentication insights into a single Power BI platform.
 
-> Create a single source of truth for endpoint administrators, security teams, and management by bringing together critical endpoint metrics from multiple systems into a unified dashboard.
+The primary objective was to establish a single source of truth for operational reporting while reducing the effort required to gather information from multiple systems.
 
 ---
 
-## The Problem
+# Business Challenge
 
-Like many organizations, endpoint data existed across several disconnected platforms:
+Before this solution was implemented, operational reporting required data from several disconnected systems.
+
+Examples included:
 
 - Microsoft Intune
 - Microsoft Entra ID
 - Microsoft Defender
-- Apple device management data
-- Android management data
-- Software packaging and lifecycle tracking systems
-- Authentication and passwordless adoption data
+- Active Directory
+- Software lifecycle tracking
+- Passwordless adoption reporting
+- Device compliance reporting
+- Update management reporting
 
-Answering simple operational questions often required navigating between multiple portals:
+While each platform provided useful information individually, there was no centralized view capable of presenting the overall health of the endpoint environment.
 
-- Are devices up to date?
-- Which update ring is currently being deployed?
-- What percentage of devices are compliant?
-- Which applications are behind on updates?
-- How is passwordless adoption progressing?
-- Which devices are experiencing enrollment issues?
-- What operating systems need attention?
+This created several challenges:
 
-Collecting this information manually consumed valuable time and limited visibility for both engineering teams and management stakeholders.
+- Data silos across multiple management platforms
+- Manual reporting efforts
+- Reduced visibility for management teams
+- Longer investigation times
+- Difficulty tracking enterprise-wide trends
+
+The goal was to create a reporting platform that could aggregate this information and provide actionable insights through a single dashboard.
 
 ---
 
-## Solution Architecture
+# Solution Architecture
 
-The dashboard centralizes information from multiple data sources and presents it through a consistent reporting experience in Power BI.
+The solution uses a hybrid architecture that combines cloud automation, on-premises data extraction, SharePoint storage, and Power BI reporting.
 
-### Data Sources
+./images/unified-endpoint-intelligence-architecture.png
 
-The solution can be adapted to use data from:
+## Core Components
 
-- Microsoft Graph API
+### Microsoft 365 Data Sources
+
+Cloud-based information is collected from:
+
 - Microsoft Intune
 - Microsoft Entra ID
 - Microsoft Defender for Endpoint
-- Application inventory systems
-- Device management platforms
-- Internal operational data sources
-- CSV, SharePoint, SQL, or REST API sources
+- Additional Microsoft 365 services when permissions are available
 
-### Data Processing
+### Azure Automation
 
-The reporting pipeline follows a standard approach:
+Azure Automation is used to:
 
-1. Collect data from various management platforms.
-2. Normalize and transform data using Power Query.
-3. Create relationships within a centralized data model.
-4. Build business logic using DAX measures.
-5. Publish dashboards to Power BI Service.
-6. Refresh data automatically on a scheduled basis.
+- Execute scheduled extraction jobs
+- Authenticate to approved Microsoft services
+- Trigger collection processes
+- Generate reporting datasets
+
+### Reporting Ingestion Service
+
+A dedicated ingestion service acts as an intermediary between data collection processes and the reporting repository.
+
+Responsibilities include:
+
+- Data normalization
+- Authentication management
+- Secure credential handling
+- File generation
+- Data delivery into SharePoint
+
+### Active Directory Data Collection
+
+Certain information is extracted directly from on-premises Active Directory using PowerShell automation running on a Windows Server.
+
+This allows the reporting platform to combine:
+
+- Cloud identities
+- Device information
+- Legacy Active Directory attributes
+
+into a single reporting model.
+
+### SharePoint Repository
+
+SharePoint serves as the centralized storage location for reporting datasets.
+
+Benefits include:
+
+- Easy integration with Power BI
+- Version control
+- Simplified access management
+- Centralized storage for automated and manually generated datasets
+
+### Power BI
+
+Power BI is used for:
+
+- Data transformation
+- Data modeling
+- KPI calculations
+- Dashboard visualization
+- Scheduled refresh processes
 
 ---
 
-## Dashboard Modules
+# Data Collection Process
 
-### Windows Update Compliance
+The reporting workflow follows these steps:
+
+1. Azure Automation executes scheduled data collection jobs.
+2. Approved Microsoft 365 data is extracted using authorized service principals.
+3. PowerShell scripts collect on-premises Active Directory data.
+4. Data is normalized through the ingestion service.
+5. Processed datasets are written to SharePoint.
+6. Power BI imports and transforms the data.
+7. DAX measures calculate operational metrics.
+8. Dashboard pages are refreshed and published.
+
+This architecture creates a centralized reporting platform capable of combining information from multiple systems while maintaining a relatively simple operational footprint.
+
+---
+
+# Automation and Security Constraints
+
+Although many parts of the solution are automated, certain data sources cannot currently be collected automatically due to organizational security controls.
+
+Examples include:
+
+- Certain Microsoft Defender for Endpoint exports
+- Secure Boot reporting
+- Specific security datasets requiring enhanced API permissions
+- Reports requiring restricted Microsoft Graph permissions
+
+Automating these workloads would require:
+
+- Additional Entra ID application registrations
+- Additional Microsoft Graph permissions
+- Additional Defender API permissions
+
+At the time of implementation, these permissions were not available within the organization's security governance framework.
+
+As a result, some highly restricted datasets are collected through controlled manual exports and placed into the SharePoint repository before being processed by Power BI.
+
+This limitation is not related to Power BI or Azure Automation capabilities but rather to security and governance requirements within the tenant.
+
+The reporting model was intentionally designed so that these data sources can be automated in the future without requiring redesign of the dashboard architecture.
+
+---
+
+# Dashboard Modules
+
+## Windows Update Compliance
 
 Provides visibility into:
 
-- Security update deployment status
-- Feature update progress
+- Security update deployment
+- Feature update adoption
 - Update ring progress
-- Device compliance
-- Update adoption trends
-- UEFI and firmware compliance
+- Compliance status
+- Firmware update reporting
+- Device update health
 
 ./images/windows-update-dashboard.png
 
 ---
 
-### Apple Device Update Compliance
+## Apple Device Security and Update Compliance
 
-Provides reporting for:
+Tracks:
 
-- macOS update deployment
-- iOS and iPadOS update status
-- Device compliance
-- Security patch tracking
-- Ring deployment progress
+- macOS update status
+- iPadOS update status
+- iOS update status
+- Compliance status
+- Security patch deployment
+- Update ring progress
 
 ./images/apple-update-dashboard.png
 
 ---
 
-### Android Security and Compliance
+## Android Security Reporting
 
-Tracks:
+Provides reporting on:
 
-- Android compliance status
+- Compliance status
 - Security update status
-- Feature update status
-- Device activity and check-in data
+- Feature update deployment
+- Device activity
 
 ./images/android-dashboard.png
 
 ---
 
-### Intune Device Intelligence
+## Intune Device Intelligence
 
-Provides operational visibility into:
+Delivers operational visibility into:
 
-- Enrollment health
+- Device health
 - Device inventory
 - Encryption status
-- Compliance trends
-- Device health indicators
-- Enrollment issues requiring remediation
+- Enrollment issues
+- Management status
+- Compliance health
 
 ./images/intune-dashboard.png
 
 ---
 
-### Software Lifecycle Management
+## Software Lifecycle Management
 
-A centralized application reporting module showing:
+This dashboard provides a centralized view of application health across the environment.
+
+Key metrics include:
 
 - Application inventory
-- Current package versions
+- Current packaged versions
 - Latest vendor versions
-- Risk classifications
-- Applications requiring updates
-- Package ownership and management teams
+- Risk classification
+- Devices behind latest versions
+- Application ownership
 
-This allows administrators to quickly identify outdated applications and prioritize remediation activities.
+The result is improved visibility into software lifecycle management and remediation prioritization.
 
 ./images/software-dashboard.png
 
 ---
 
-### Passwordless Readiness
+## Passwordless Readiness
 
-Measures organization readiness and adoption for modern authentication technologies including:
+Tracks organizational adoption of modern authentication technologies including:
 
 - Windows Hello for Business
 - Passkeys
 - Passwordless authentication
-- Adoption percentage by business unit
+- Adoption by business unit
 - Readiness metrics
 
 ./images/passwordless-readiness-dashboard.png
 
 ---
 
-### Authentication Methods Analysis
+## Authentication Methods Analytics
 
-Provides insight into authentication methods currently registered across the environment, enabling security teams to understand:
+Provides insight into how users authenticate across the organization.
 
-- MFA adoption
+Examples include:
+
 - Passkey adoption
-- Phone sign-in usage
+- Phone Sign-in usage
 - Push notification enrollment
-- Authentication trends
+- MFA registration
+- Authentication method trends
 
 ./images/authentication-methods-dashboard.png
 
 ---
 
-## Business Benefits
+# Business Benefits
 
-By consolidating endpoint reporting into a single platform, organizations can:
+The solution provides several operational improvements.
 
-### Reduce Reporting Overhead
+## Centralized Visibility
 
-Administrators spend less time collecting information from multiple portals and more time acting on insights.
+Endpoint administrators no longer need to navigate multiple systems to understand device health and compliance status.
 
-### Improve Operational Visibility
+## Reduced Reporting Effort
 
-Critical endpoint metrics become immediately accessible through a centralized dashboard.
+Data collection and dashboard updates are largely automated, reducing manual reporting activities.
 
-### Accelerate Decision Making
+## Improved Decision Making
 
-Management teams gain access to meaningful KPIs without requiring access to multiple technical systems.
+Leadership teams can consume high-level KPIs while technical teams can drill into operational details.
 
-### Support Security Initiatives
+## Faster Issue Identification
 
-The platform enables visibility into:
+Problems such as:
 
-- Compliance posture
-- Passwordless adoption
-- Device security status
-- Application risk exposure
+- Compliance drift
+- Update failures
+- Enrollment issues
+- Software lifecycle gaps
 
-### Establish a Single Source of Truth
+can be identified significantly faster.
 
-All endpoint teams can consume the same validated data set and reporting methodology.
+## Platform Scalability
+
+The architecture allows new data sources to be integrated over time without redesigning the reporting framework.
 
 ---
 
-## Key Lessons Learned
+# Key Lessons Learned
 
-During development, several principles proved valuable:
+Several key lessons emerged during development:
 
-- Focus on actionable metrics rather than collecting every available data point.
-- Normalize data early in the process.
-- Build reusable DAX measures.
-- Automate data refresh wherever possible.
+- Build automation around available security permissions rather than assuming unrestricted API access.
+- Separate data extraction from data visualization.
+- Normalize data before importing into Power BI.
+- Store reporting datasets in a centralized repository.
 - Design dashboards for both technical and executive audiences.
-- Use consistent visual standards across dashboard modules.
+- Focus on actionable metrics rather than collecting every available data point.
+- Use reusable DAX measures and standardized calculation patterns.
+- Expect governance requirements to influence automation decisions.
 
 ---
 
-## Final Thoughts
+# Future Enhancements
 
-A modern endpoint management environment generates enormous amounts of valuable operational data. Unfortunately, that information is often spread across multiple systems and difficult to consume effectively.
+Potential future improvements include:
 
-This project demonstrates how Power BI can serve as a centralized intelligence platform that combines endpoint management, software lifecycle tracking, update compliance, authentication insights, and security reporting into a unified solution.
+- Full Microsoft Defender for Endpoint API integration
+- Secure Boot automation
+- Additional Microsoft Graph integrations
+- Expanded vulnerability management reporting
+- Automated executive reporting
+- Direct API-based ingestion for currently restricted datasets
 
-The concepts used in this project can be adapted by any organization looking to improve visibility into their endpoint ecosystem.
+These improvements can be implemented without significant modifications to the existing reporting model.
 
-If you're building something similar and would like guidance on architecture, data modeling, Power Query transformations, DAX measures, or dashboard design considerations, feel free to reach out.
+---
+
+# Conclusion
+
+The Unified Endpoint Intelligence Dashboard demonstrates how endpoint management, security, software lifecycle management, authentication insights, and compliance reporting can be consolidated into a single operational platform.
+
+By combining Azure Automation, PowerShell, SharePoint, Microsoft 365 services, and Power BI, the solution provides a centralized view of endpoint health while respecting organizational security and governance requirements.
+
+While portions of the data collection process remain intentionally constrained by tenant security policies, the overall architecture is designed to support future automation as additional permissions become available.
+
+The result is a scalable reporting platform that reduces operational overhead, improves visibility, and provides actionable insights across the endpoint ecosystem.
+
+If you're building a similar solution and have questions about architecture, automation, Power Query, DAX modeling, Microsoft Graph integration, or dashboard design, feel free to reach out.
