@@ -311,8 +311,7 @@ export default function Post() {
       <div className="fixed inset-0 bg-cyan-500/5 blur-3xl pointer-events-none" />
 <Navbar />
       <main className="relative z-10 max-w-4xl mx-auto px-6 py-16">
-        <Link
-  to={post.categorySlug ? `/category/${post.categorySlug}` : "/"}
+        <Link to={post.categorySlug ? `/category/${post.categorySlug}` : "/"}
   className="text-cyan-300 hover:text-cyan-200"
 >
   ← Back to {post.category || "All Posts"}
