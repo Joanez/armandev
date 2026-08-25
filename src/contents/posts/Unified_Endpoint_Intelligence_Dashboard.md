@@ -212,7 +212,6 @@ Tracks:
 - Security patch deployment
 - Update ring progress
 
-./images/apple-update-dashboard.png
 
 ---
 
@@ -240,7 +239,7 @@ Delivers operational visibility into:
 - Management status
 - Compliance health
 
-./images/intune-dashboard.png
+
 
 ---
 
@@ -259,7 +258,7 @@ Key metrics include:
 
 The result is improved visibility into software lifecycle management and remediation prioritization.
 
-./images/software-dashboard.png
+
 
 ---
 
@@ -273,7 +272,7 @@ Tracks organizational adoption of modern authentication technologies including:
 - Adoption by business unit
 - Readiness metrics
 
-./images/passwordless-readiness-dashboard.png
+
 
 ---
 
@@ -289,7 +288,7 @@ Examples include:
 - MFA registration
 - Authentication method trends
 
-./images/authentication-methods-dashboard.png
+![Report Overview](/images/Endpoint_Dashboard/unified-endpoint-intelligence-architecture.png)
 
 ---
 
@@ -319,6 +318,7 @@ Problems such as:
 - Software lifecycle gaps
 
 can be identified significantly faster.
+
 
 ## Platform Scalability
 
