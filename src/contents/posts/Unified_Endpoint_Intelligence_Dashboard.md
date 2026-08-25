@@ -69,7 +69,9 @@ The goal was to create a reporting platform that could aggregate this informatio
 
 The solution uses a hybrid architecture that combines cloud automation, on-premises data extraction, SharePoint storage, and Power BI reporting.
 
-./images/unified-endpoint-intelligence-architecture.png
+
+![Architecture](/images/Endpoint_Dashboard/unified-endpoint-intelligence-architecture.png.png)
+
 
 ## Core Components
 
