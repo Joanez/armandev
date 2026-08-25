@@ -288,10 +288,11 @@ export default function App() {
         </h2>
 
         <p className="mt-5 max-w-4xl text-lg leading-relaxed text-white/65">
-          ArmanDev is my engineering notebook for Microsoft 365 and endpoint
-          operations. I publish solutions that stand up in enterprise
-          environments: repeatable automation, deployment patterns, reporting
-          pipelines, and troubleshooting guides that save time and reduce risk.
+          ArmanDev is my engineering notebook for enterprise technology, automation, and operational excellence.
+
+I share real-world projects, technical solutions, and implementation guidance across Microsoft 365, cloud services, identity, security, endpoint management, reporting, and automation.
+
+The content is based on practical experience and focuses on building scalable, supportable, and efficient solutions that solve real business and operational challenges.
         </p>
       </section>
 
