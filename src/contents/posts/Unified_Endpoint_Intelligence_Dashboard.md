@@ -197,7 +197,6 @@ Provides visibility into:
 - Firmware update reporting
 - Device update health
 
-./images/windows-update-dashboard.png
 
 ---
 
@@ -224,7 +223,6 @@ Provides reporting on:
 - Feature update deployment
 - Device activity
 
-./images/android-dashboard.png
 
 ---
 
@@ -288,7 +286,7 @@ Examples include:
 - MFA registration
 - Authentication method trends
 
-![Report Overview](/images/Endpoint_Dashboard/unified-endpoint-intelligence-architecture.png)
+![Report Overview](/images/Endpoint_Dashboard/Visuals.png)
 
 ---
 
