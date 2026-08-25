@@ -34,6 +34,8 @@ To address this challenge, I designed and implemented a **Unified Endpoint Intel
 
 The primary objective was to establish a single source of truth for operational reporting while reducing the effort required to gather information from multiple systems.
 
+![Report Overview](/images/Endpoint_Dashboard/Visuals.png)
+
 ---
 
 # Business Challenge
@@ -286,7 +288,6 @@ Examples include:
 - MFA registration
 - Authentication method trends
 
-![Report Overview](/images/Endpoint_Dashboard/Visuals.png)
 
 ---
 
