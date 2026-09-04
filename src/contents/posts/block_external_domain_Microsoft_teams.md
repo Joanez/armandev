@@ -10,7 +10,7 @@ tags:
   - PowerShell
   - Teams Federation
   - Collaboration
-category: "Microsoft 365"
+category: "Microsoft Teams"
 header_image: "/images/m365/teams-federation-control/header.png"
 ---
 

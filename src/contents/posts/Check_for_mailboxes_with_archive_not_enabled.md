@@ -10,7 +10,7 @@ tags:
   - Compliance
   - Email
   - Automation
-category: "Microsoft 365"
+category: "Exchange Online"
 header_image: "/images/exchange-online/archive-mailbox-audit/header.png"
 ---
 

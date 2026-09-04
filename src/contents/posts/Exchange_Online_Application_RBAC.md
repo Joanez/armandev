@@ -12,7 +12,7 @@ tags:
   - Application RBAC
   - OAuth
   - Microsoft Graph
-category: "Microsoft 365"
+category: "Exchange Online"
 header_image: "/images/exchange-online/application-rbac-mail/header.png"
 ---
 
